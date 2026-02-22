@@ -10,13 +10,16 @@ export const dynamic = 'force-dynamic';
 export default async function HomePage() {
   const sessions = await getPublishedSessions();
 
-  // Get current/upcoming session (compare dates only, ignoring time)
+  // Hero = nearest upcoming session, or most recent past session
   const todayStr = new Date().toISOString().slice(0, 10);
-  const upcomingSessions = sessions
+  const upcoming = sessions
     .filter(s => s.date >= todayStr)
     .sort((a, b) => a.date.localeCompare(b.date));
+  const past = sessions
+    .filter(s => s.date < todayStr)
+    .sort((a, b) => b.date.localeCompare(a.date));
 
-  const currentSession = upcomingSessions[0] || sessions[sessions.length - 1];
+  const currentSession = upcoming[0] || past[0];
 
   if (!currentSession) {
     return (
