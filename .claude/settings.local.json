@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:skillsmp.com)",
+      "Bash(claude plugins:*)",
+      "Bash(claude /plugin)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(ls:*)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --yes)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init:*)",
+      "Bash(npx shadcn@latest add button dialog input textarea tabs switch card label skeleton sonner -y)",
+      "Bash(npx next build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(openssl rand:*)",
+      "Bash(curl -s -X POST \"https://mrmgtstkafowngjrqqjz.supabase.co/rest/v1/rpc\" -H \"apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8\" -H \"Content-Type: application/json\" -d '{\"\"query\"\": \"\"SELECT 1 as test\"\"}')",
+      "Bash(node -e \"\nconst { createClient } = require\\(''@supabase/supabase-js''\\);\nconst c = createClient\\(''https://mrmgtstkafowngjrqqjz.supabase.co'', ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8''\\);\nc.from\\(''sessions''\\).select\\(''count''\\).then\\(r => console.log\\(JSON.stringify\\(r\\)\\)\\).catch\\(e => console.error\\(e\\)\\);\n\")",
+      "Bash(node -e \"\nconst fs = require\\(''fs''\\);\nconst sql = fs.readFileSync\\(''supabase/migrations/001_initial_schema.sql'', ''utf8''\\);\n\nfetch\\(''https://mrmgtstkafowngjrqqjz.supabase.co/rest/v1/rpc'', {\n  method: ''POST'',\n  headers: {\n    ''apikey'': ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8'',\n    ''Authorization'': ''Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8'',\n    ''Content-Type'': ''application/json''\n  },\n  body: JSON.stringify\\({ query: sql }\\)\n}\\).then\\(r => r.text\\(\\)\\).then\\(console.log\\).catch\\(console.error\\);\n\")",
+      "Bash(npx supabase db execute --help:*)",
+      "Bash(npx supabase db push --help:*)",
+      "Bash(npx supabase:*)",
+      "Bash(node -e \"\nconst fs = require\\(''fs''\\);\nconst sql = fs.readFileSync\\(''supabase/migrations/001_initial_schema.sql'', ''utf8''\\);\n\n// Supabase exposes pg-meta endpoint for SQL execution\nfetch\\(''https://mrmgtstkafowngjrqqjz.supabase.co/pg/query'', {\n  method: ''POST'',\n  headers: {\n    ''apikey'': ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8'',\n    ''Authorization'': ''Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8'',\n    ''Content-Type'': ''application/json''\n  },\n  body: JSON.stringify\\({ query: sql }\\)\n}\\).then\\(r => { console.log\\(''Status:'', r.status\\); return r.text\\(\\); }\\).then\\(console.log\\).catch\\(console.error\\);\n\")",
+      "Bash(node -e \"\nconst { createClient } = require\\(''@supabase/supabase-js''\\);\nconst c = createClient\\(''https://mrmgtstkafowngjrqqjz.supabase.co'', ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ybWd0c3RrYWZvd25nanJxcWp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTc0NTQwNCwiZXhwIjoyMDg3MzIxNDA0fQ.meC_A6YV7aNBW_t4aqEW4btRk7ZvAy6Bc_tdYSci7h8''\\);\n\nPromise.all\\([\n  c.from\\(''sessions''\\).select\\(''title, year, published''\\),\n  c.from\\(''rating_categories''\\).select\\(''id, name''\\),\n  c.from\\(''session_sections''\\).select\\(''type, enabled''\\),\n  c.from\\(''bingo_items''\\).select\\(''text''\\).limit\\(5\\),\n  c.from\\(''admin_settings''\\).select\\(''key''\\),\n]\\).then\\(\\([sessions, cats, sections, bingo, settings]\\) => {\n  console.log\\(''Sessions:'', JSON.stringify\\(sessions.data\\)\\);\n  console.log\\(''Categories:'', JSON.stringify\\(cats.data\\)\\);\n  console.log\\(''Sections:'', JSON.stringify\\(sections.data\\)\\);\n  console.log\\(''Bingo \\(first 5\\):'', JSON.stringify\\(bingo.data\\)\\);\n  console.log\\(''Settings:'', JSON.stringify\\(settings.data\\)\\);\n  console.log\\(''\\\\nErrors:'', [sessions,cats,sections,bingo,settings].filter\\(r=>r.error\\).map\\(r=>r.error\\)\\);\n}\\);\n\")",
+      "Bash(node -e:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh auth:*)",
+      "Bash(npx vercel:*)",
+      "Bash(source:*)",
+      "Bash(echo:*)",
+      "Bash(where:*)"
+    ]
+  }
+}
