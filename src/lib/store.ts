@@ -123,7 +123,7 @@ const seedBingoItems: BingoItem[] = [
 
 const seedCategories: RatingCategory[] = [
   { id: 'story', name: 'Сюжет', icon: null, sort_order: 0 },
-  { id: 'cinematography', name: 'Операторская работа', icon: null, sort_order: 1 },
+  { id: 'depth', name: 'Глубина сюжета', icon: null, sort_order: 1 },
   { id: 'acting', name: 'Актёрская игра', icon: null, sort_order: 2 },
   { id: 'direction', name: 'Режиссура', icon: null, sort_order: 3 },
   { id: 'overall', name: 'Общее впечатление', icon: null, sort_order: 4 },

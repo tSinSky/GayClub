@@ -1,4 +1,4 @@
-import { Camera, BookOpen, Lightbulb, Film, Sparkles } from 'lucide-react';
+import { Camera, BookOpen, Lightbulb, Film, Sparkles, Clapperboard } from 'lucide-react';
 import type { SectionType, RatingCategory } from '@/types';
 
 export const SECTION_CONFIG: Record<
@@ -9,9 +9,13 @@ export const SECTION_CONFIG: Record<
     title: 'О режиссёре',
     icon: Film,
   },
+  motivation: {
+    title: 'Почему этот фильм',
+    icon: Clapperboard,
+  },
   cinematography: {
-    title: 'Операторская работа',
-    icon: Camera,
+    title: 'О сюжете',
+    icon: BookOpen,
   },
   influence: {
     title: 'Влияние и контекст',
@@ -29,6 +33,7 @@ export const SECTION_CONFIG: Record<
 
 export const SECTION_TYPES: SectionType[] = [
   'director',
+  'motivation',
   'cinematography',
   'influence',
   'themes',

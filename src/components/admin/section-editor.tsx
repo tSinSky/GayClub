@@ -325,9 +325,10 @@ export default function SectionEditor({ type, content, onChange }: Props) {
                 <Textarea
                   value={card.description}
                   onChange={(e) => updateCard(i, 'description', e.target.value)}
-                  placeholder="Описание"
-                  className="bg-zinc-900 border-zinc-700"
+                  placeholder="Описание факта... (поддерживает Markdown)"
+                  className="bg-zinc-900 border-zinc-700 min-h-24"
                 />
+                <p className="text-xs text-zinc-500">Поддерживает Markdown: **жирный**, *курсив*, ## заголовки, - списки</p>
                 <Input
                   value={card.imageUrl || ''}
                   onChange={(e) => updateCard(i, 'imageUrl', e.target.value)}

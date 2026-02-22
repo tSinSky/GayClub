@@ -1,4 +1,4 @@
-export type SectionType = 'director' | 'cinematography' | 'influence' | 'themes' | 'facts';
+export type SectionType = 'director' | 'cinematography' | 'motivation' | 'influence' | 'themes' | 'facts';
 
 export interface Session {
   id: string;

@@ -35,7 +35,14 @@
       "Bash(npx vercel:*)",
       "Bash(source:*)",
       "Bash(echo:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(curl:*)",
+      "Bash(for env in production preview development)",
+      "Bash(do echo \"$NEXT_PUBLIC_SUPABASE_URL\")",
+      "Bash(done)"
     ]
   }
 }

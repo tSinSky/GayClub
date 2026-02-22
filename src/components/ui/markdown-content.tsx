@@ -118,6 +118,10 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
   );
 }
 
+export function slugify(text: string) {
+  return text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '');
+}
+
 export default function MarkdownContent({ children, className }: Props) {
   const [lightbox, setLightbox] = useState<string | null>(null);
 
@@ -147,6 +151,10 @@ export default function MarkdownContent({ children, className }: Props) {
       >
         <ReactMarkdown
           components={{
+            h1: ({ children }) => <h1 id={slugify(String(children))}>{children}</h1>,
+            h2: ({ children }) => <h2 id={slugify(String(children))}>{children}</h2>,
+            h3: ({ children }) => <h3 id={slugify(String(children))}>{children}</h3>,
+            h4: ({ children }) => <h4 id={slugify(String(children))}>{children}</h4>,
             img: ({ src, alt }) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img
