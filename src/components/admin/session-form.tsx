@@ -739,14 +739,14 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
         >
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="-mx-1 mb-6 overflow-x-auto pb-1">
-              <TabsList className="inline-flex h-auto w-auto flex-wrap gap-1 rounded-xl border border-zinc-800 bg-zinc-950/60 p-2">
+              <TabsList className="inline-flex h-auto w-auto flex-wrap gap-1 rounded-xl border border-zinc-800 bg-zinc-950/60 p-1.5">
                 {visibleSlots.map((s) => {
                   const displayTitle = getSectionTitle(s) || '(без названия)';
                   return (
                     <TabsTrigger
                       key={s.id}
                       value={s.id}
-                      className="group/trigger relative flex h-9 items-center gap-2 rounded-lg px-3.5 text-[13px] font-medium text-zinc-400 transition-all hover:text-zinc-100 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-300 data-[state=active]:shadow-[inset_0_0_0_1px_rgba(245,158,11,0.25)]"
+                      className="group/trigger relative flex h-8 items-center gap-2 rounded-lg px-3 text-[12px] font-medium text-zinc-400 transition-all hover:text-zinc-100 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-300 data-[state=active]:shadow-[inset_0_0_0_1px_rgba(245,158,11,0.25)]"
                     >
                       <span>{displayTitle}</span>
                       {!s.enabled && (
@@ -758,7 +758,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
                 <button
                   type="button"
                   onClick={addCustomSection}
-                  className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-lg border border-dashed border-amber-500/30 px-3 text-[12px] font-medium text-amber-400 transition-colors hover:bg-amber-500/10"
+                  className="ml-1 inline-flex h-8 items-center gap-1.5 rounded-lg border border-dashed border-amber-500/30 px-3 text-[11px] font-medium text-amber-400 transition-colors hover:bg-amber-500/10"
                 >
                   <Plus className="size-3.5" />
                   Добавить раздел
