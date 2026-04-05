@@ -193,21 +193,6 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
     updateDirector({ filmography: films });
   };
 
-  /* --- Image helpers --- */
-  const addImage = () => {
-    onChange({ ...content, images: [...(content.images || []), ''] });
-  };
-
-  const updateImage = (index: number, url: string) => {
-    const images = [...(content.images || [])];
-    images[index] = url;
-    onChange({ ...content, images });
-  };
-
-  const removeImage = (index: number) => {
-    onChange({ ...content, images: (content.images || []).filter((_, i) => i !== index) });
-  };
-
   /* --- Video helpers --- */
   const addVideo = () => {
     onChange({
@@ -405,52 +390,6 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
       {/* ============================================================ */}
       {type === 'cinematography' && (
         <div className="space-y-6">
-          {/* Images */}
-          <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
-            <SubsectionHeader
-              icon={ImageIcon}
-              title="Изображения кадров"
-              hint="Скриншоты или кадры из фильма"
-              action={<AddButton onClick={addImage} />}
-            />
-            {(content.images || []).length === 0 ? (
-              <EmptyList icon={ImageIcon} label="Изображения не добавлены" />
-            ) : (
-              <div className="space-y-2.5">
-                {(content.images || []).map((img, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-2 transition-colors hover:border-zinc-700/70"
-                  >
-                    <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
-                      {img ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={img}
-                          alt=""
-                          className="h-full w-full object-cover"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <ImageIcon className="size-4 text-zinc-700" />
-                      )}
-                    </div>
-                    <IconInput
-                      icon={LinkIcon}
-                      value={img}
-                      onChange={(e) => updateImage(i, e.target.value)}
-                      placeholder="URL изображения"
-                      className="font-mono"
-                    />
-                    <DeleteIconButton onClick={() => removeImage(i)} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
           {/* Videos */}
           <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
             <SubsectionHeader
