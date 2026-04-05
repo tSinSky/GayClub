@@ -168,12 +168,15 @@ function defaultContentFor(type: SectionType): SectionContent {
 }
 
 function initSlots(existing: SessionSection[]): SectionSlot[] {
-  // Start from DB rows (already sort_order-ordered from server action)
+  // Start from DB rows (already sort_order-ordered from server action).
+  // Coalesce title/icon with ?? null because the Supabase client may omit
+  // the fields entirely for rows returned before the schema cache refresh,
+  // and the rest of the code expects string | null, never undefined.
   const fromDb: SectionSlot[] = existing.map((s) => ({
     id: s.id,
     type: s.type,
-    title: s.title,
-    icon: s.icon,
+    title: s.title ?? null,
+    icon: s.icon ?? null,
     content: s.content,
     enabled: s.enabled,
     sortOrder: s.sort_order,

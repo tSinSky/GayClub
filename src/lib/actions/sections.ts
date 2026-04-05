@@ -10,15 +10,15 @@ import type { SessionSection, SectionContent, SectionType } from '@/types';
 
 const TITLE_MAX_LENGTH = 100;
 
-function normalizeTitle(raw: string | null): string | null {
-  if (raw === null) return null;
+function normalizeTitle(raw: string | null | undefined): string | null {
+  if (raw == null || typeof raw !== 'string') return null;
   const trimmed = raw.trim();
   if (!trimmed) return null;
   return trimmed.slice(0, TITLE_MAX_LENGTH);
 }
 
-function normalizeIcon(raw: string | null): string | null {
-  if (raw === null) return null;
+function normalizeIcon(raw: string | null | undefined): string | null {
+  if (raw == null || typeof raw !== 'string') return null;
   if (raw in ICON_LIBRARY) return raw;
   return null;
 }
