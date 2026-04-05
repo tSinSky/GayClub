@@ -1,4 +1,4 @@
-export type SectionType = 'director' | 'cinematography' | 'motivation' | 'influence' | 'themes' | 'facts';
+export type SectionType = 'director' | 'cinematography' | 'motivation' | 'influence' | 'themes' | 'facts' | 'custom';
 
 export interface Session {
   id: string;
@@ -20,10 +20,19 @@ export interface SessionSection {
   id: string;
   session_id: string;
   type: SectionType;
+  title: string | null;
+  icon: string | null;
   enabled: boolean;
   sort_order: number;
   content: SectionContent;
 }
+
+export type IconName =
+  | 'Film' | 'Clapperboard' | 'Camera' | 'Video' | 'Projector'
+  | 'BookOpen' | 'Lightbulb' | 'Sparkles' | 'Star' | 'Heart'
+  | 'Award' | 'Crown' | 'Feather' | 'Eye' | 'Compass'
+  | 'Target' | 'Zap' | 'Flame' | 'Moon' | 'Sun'
+  | 'Music' | 'Palette' | 'Quote' | 'Bookmark';
 
 export interface SectionContent {
   text?: string;

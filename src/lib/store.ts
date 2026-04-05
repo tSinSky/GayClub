@@ -34,6 +34,8 @@ const seedSections: SessionSection[] = [
     id: uuid(),
     session_id: SEED_SESSION_ID,
     type: 'director',
+    title: null,
+    icon: null,
     enabled: true,
     sort_order: 0,
     content: {
@@ -54,6 +56,8 @@ const seedSections: SessionSection[] = [
     id: uuid(),
     session_id: SEED_SESSION_ID,
     type: 'cinematography',
+    title: null,
+    icon: null,
     enabled: true,
     sort_order: 1,
     content: {
@@ -72,6 +76,8 @@ const seedSections: SessionSection[] = [
     id: uuid(),
     session_id: SEED_SESSION_ID,
     type: 'influence',
+    title: null,
+    icon: null,
     enabled: true,
     sort_order: 2,
     content: {
@@ -82,6 +88,8 @@ const seedSections: SessionSection[] = [
     id: uuid(),
     session_id: SEED_SESSION_ID,
     type: 'themes',
+    title: null,
+    icon: null,
     enabled: true,
     sort_order: 3,
     content: {
@@ -96,6 +104,8 @@ const seedSections: SessionSection[] = [
     id: uuid(),
     session_id: SEED_SESSION_ID,
     type: 'facts',
+    title: null,
+    icon: null,
     enabled: true,
     sort_order: 4,
     content: {
@@ -234,6 +244,8 @@ export const store = {
       id: uuid(),
       session_id: sessionId,
       type: type as SessionSection['type'],
+      title: null,
+      icon: null,
       content,
       enabled,
       sort_order: sortOrder,
