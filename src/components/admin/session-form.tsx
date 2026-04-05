@@ -17,7 +17,6 @@ import { createSession, updateSession } from '@/lib/actions/sessions';
 import {
   upsertSection,
   deleteCustomSection,
-  reorderSections,
 } from '@/lib/actions/sections';
 import {
   SECTION_CONFIG,
