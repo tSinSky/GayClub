@@ -225,33 +225,96 @@ export const store = {
       .sort((a, b) => a.sort_order - b.sort_order);
   },
 
-  upsertSection(
-    sessionId: string,
-    type: string,
-    content: SessionSection['content'],
-    enabled: boolean,
-    sortOrder: number
-  ): SessionSection {
+  upsertSection(params: {
+    id?: string;
+    sessionId: string;
+    type: SessionSection['type'];
+    title: string | null;
+    icon: string | null;
+    content: SessionSection['content'];
+    enabled: boolean;
+    sortOrder: number;
+  }): SessionSection {
     const s = getStore();
-    const idx = s.sections.findIndex(
-      (sec) => sec.session_id === sessionId && sec.type === type
-    );
-    if (idx !== -1) {
-      s.sections[idx] = { ...s.sections[idx], content, enabled, sort_order: sortOrder };
-      return s.sections[idx];
+
+    // Update by id (customs: always; built-ins: when we know the row id)
+    if (params.id) {
+      const idx = s.sections.findIndex(
+        (sec) => sec.id === params.id && sec.session_id === params.sessionId,
+      );
+      if (idx !== -1) {
+        s.sections[idx] = {
+          ...s.sections[idx],
+          type: params.type,
+          title: params.title,
+          icon: params.icon,
+          content: params.content,
+          enabled: params.enabled,
+          sort_order: params.sortOrder,
+        };
+        return s.sections[idx];
+      }
     }
+
+    // Built-in upsert by (sessionId, type). Customs without id always insert new.
+    if (params.type !== 'custom') {
+      const idx = s.sections.findIndex(
+        (sec) => sec.session_id === params.sessionId && sec.type === params.type,
+      );
+      if (idx !== -1) {
+        s.sections[idx] = {
+          ...s.sections[idx],
+          title: params.title,
+          icon: params.icon,
+          content: params.content,
+          enabled: params.enabled,
+          sort_order: params.sortOrder,
+        };
+        return s.sections[idx];
+      }
+    }
+
     const newSection: SessionSection = {
       id: uuid(),
-      session_id: sessionId,
-      type: type as SessionSection['type'],
-      title: null,
-      icon: null,
-      content,
-      enabled,
-      sort_order: sortOrder,
+      session_id: params.sessionId,
+      type: params.type,
+      title: params.title,
+      icon: params.icon,
+      content: params.content,
+      enabled: params.enabled,
+      sort_order: params.sortOrder,
     };
     s.sections.push(newSection);
     return newSection;
+  },
+
+  deleteCustomSection(sessionId: string, sectionId: string): { success: boolean; error?: string } {
+    const s = getStore();
+    const idx = s.sections.findIndex(
+      (sec) => sec.id === sectionId && sec.session_id === sessionId,
+    );
+    if (idx === -1) return { success: false, error: 'Section not found' };
+    if (s.sections[idx].type !== 'custom') {
+      return { success: false, error: 'Only custom sections can be deleted' };
+    }
+    s.sections.splice(idx, 1);
+    return { success: true };
+  },
+
+  reorderSections(sessionId: string, orderedIds: string[]): { success: boolean; error?: string } {
+    const s = getStore();
+    // Validate: all ids must belong to this session
+    const sessionSections = s.sections.filter((sec) => sec.session_id === sessionId);
+    for (const id of orderedIds) {
+      if (!sessionSections.some((sec) => sec.id === id)) {
+        return { success: false, error: `Section ${id} does not belong to session` };
+      }
+    }
+    orderedIds.forEach((id, index) => {
+      const sec = s.sections.find((x) => x.id === id && x.session_id === sessionId);
+      if (sec) sec.sort_order = index;
+    });
+    return { success: true };
   },
 
   toggleSection(sessionId: string, type: string, enabled: boolean): boolean {

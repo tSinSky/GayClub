@@ -108,13 +108,15 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
       // Save sections
       for (const type of SECTION_TYPES) {
         const s = sectionState[type];
-        await upsertSection(
-          sessionId!,
+        await upsertSection({
+          sessionId: sessionId!,
           type,
-          s.content,
-          s.enabled,
-          SECTION_TYPES.indexOf(type)
-        );
+          title: null,
+          icon: null,
+          content: s.content,
+          enabled: s.enabled,
+          sortOrder: SECTION_TYPES.indexOf(type),
+        });
       }
 
       toast.success(publish ? 'Встреча опубликована' : 'Встреча сохранена');
