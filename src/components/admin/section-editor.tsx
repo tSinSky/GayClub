@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { RichEditor } from '@/components/ui/rich-editor';
 import {
   Plus,
   Trash2,
@@ -165,9 +166,6 @@ function EmptyList({
 /* ================================================================== */
 
 export default function SectionEditor({ type, content, onChange, sessionId }: Props) {
-  // sessionId will be used by RichEditor in Task 8
-  void sessionId;
-
   const updateText = (text: string) => {
     onChange({ ...content, text });
   };
@@ -530,11 +528,13 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
                         <QuoteIcon className="size-3" />
                         Текст цитаты
                       </Label>
-                      <Textarea
+                      <RichEditor
                         value={quote.text}
-                        onChange={(e) => updateQuote(i, 'text', e.target.value)}
+                        onChange={(md) => updateQuote(i, 'text', md)}
+                        features={['bold', 'italic']}
                         placeholder="«Всё, что я видел, исчезнет во времени, как слёзы под дождём…»"
-                        className="min-h-20 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] italic leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                        className="min-h-20"
+                        sessionId={sessionId}
                       />
                     </div>
 
