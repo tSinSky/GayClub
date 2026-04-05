@@ -421,17 +421,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
             {slots
               .filter((s) => !s._deleted)
               .map((s) => {
-                const displayTitle =
-                  getSectionTitle({
-                    id: s.id,
-                    session_id: '',
-                    type: s.type,
-                    title: s.title,
-                    icon: s.icon,
-                    enabled: s.enabled,
-                    sort_order: s.sortOrder,
-                    content: s.content,
-                  }) || '(без названия)';
+                const displayTitle = getSectionTitle(s) || '(без названия)';
                 return (
                   <TabsTrigger
                     key={s.id}

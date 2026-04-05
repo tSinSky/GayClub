@@ -2,6 +2,8 @@ import { SECTION_CONFIG, ICON_LIBRARY, DEFAULT_CUSTOM_ICON, type IconName } from
 import type { SessionSection, SectionType } from '@/types';
 import type { LucideIcon } from 'lucide-react';
 
+type SectionDisplayable = Pick<SessionSection, 'type' | 'title' | 'icon'>;
+
 /**
  * Resolves the display title for a section:
  *   1. Per-session override (`section.title`), trimmed non-empty
@@ -9,7 +11,7 @@ import type { LucideIcon } from 'lucide-react';
  *   3. Generic fallback 'Раздел' for custom sections without title
  *   4. Empty string as last resort (shouldn't happen if data is valid)
  */
-export function getSectionTitle(section: SessionSection): string {
+export function getSectionTitle(section: SectionDisplayable): string {
   if (section.title && section.title.trim()) return section.title;
   if (section.type === 'custom') return 'Раздел';
   const builtin = section.type as Exclude<SectionType, 'custom'>;
@@ -21,7 +23,7 @@ export function getSectionTitle(section: SessionSection): string {
  * ICON_LIBRARY. Unknown names silently fall back to defaults — this
  * keeps rendering robust if the library is ever trimmed.
  */
-export function getSectionIconName(section: SessionSection): IconName {
+export function getSectionIconName(section: SectionDisplayable): IconName {
   if (section.icon && section.icon in ICON_LIBRARY) {
     return section.icon as IconName;
   }
@@ -33,6 +35,6 @@ export function getSectionIconName(section: SessionSection): IconName {
 /**
  * Resolves the actual Lucide component for a section.
  */
-export function getSectionIcon(section: SessionSection): LucideIcon {
+export function getSectionIcon(section: SectionDisplayable): LucideIcon {
   return ICON_LIBRARY[getSectionIconName(section)];
 }
