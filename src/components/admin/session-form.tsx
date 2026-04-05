@@ -1,20 +1,95 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Save, Eye, ArrowLeft } from 'lucide-react';
+import { Save, Eye, ArrowLeft, ArrowUp, ArrowDown, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import SectionEditor from './section-editor';
 import BingoEditor from './bingo-editor';
+import IconPicker from './icon-picker';
+import { Textarea } from '@/components/ui/textarea';
 import { createSession, updateSession } from '@/lib/actions/sessions';
-import { upsertSection, toggleSection } from '@/lib/actions/sections';
-import { SECTION_CONFIG, SECTION_TYPES } from '@/lib/constants';
-import type { Session, SessionSection, SectionContent, SectionType, BingoItem } from '@/types';
+import {
+  upsertSection,
+  deleteCustomSection,
+  reorderSections,
+} from '@/lib/actions/sections';
+import {
+  SECTION_CONFIG,
+  BUILTIN_SECTION_TYPES,
+  DEFAULT_CUSTOM_ICON,
+  MAX_CUSTOM_SECTIONS_PER_SESSION,
+  type IconName,
+} from '@/lib/constants';
+import { getSectionIconName, getSectionTitle } from '@/lib/section-display';
+import type {
+  Session,
+  SessionSection,
+  SectionContent,
+  SectionType,
+  BingoItem,
+} from '@/types';
+
+type SectionSlot = {
+  id: string;
+  type: SectionType;
+  title: string | null;
+  icon: string | null;
+  content: SectionContent;
+  enabled: boolean;
+  sortOrder: number;
+  _dirty?: boolean;
+  _deleted?: boolean;
+  _isNew?: boolean;
+};
+
+function tempId() {
+  return `new-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function defaultContentFor(type: SectionType): SectionContent {
+  return type === 'facts' ? { cards: [] } : { text: '' };
+}
+
+function initSlots(existing: SessionSection[]): SectionSlot[] {
+  // Start from DB rows (already sort_order-ordered from server action)
+  const fromDb: SectionSlot[] = existing.map((s) => ({
+    id: s.id,
+    type: s.type,
+    title: s.title,
+    icon: s.icon,
+    content: s.content,
+    enabled: s.enabled,
+    sortOrder: s.sort_order,
+  }));
+
+  // Ensure all 6 built-ins are present (for new sessions or incomplete data).
+  const existingTypes = new Set(fromDb.filter((s) => s.type !== 'custom').map((s) => s.type));
+  let nextOrder = fromDb.length;
+  for (const type of BUILTIN_SECTION_TYPES) {
+    if (!existingTypes.has(type)) {
+      fromDb.push({
+        id: tempId(),
+        type,
+        title: null,
+        icon: null,
+        content: defaultContentFor(type),
+        enabled: true,
+        sortOrder: nextOrder++,
+        _isNew: true,
+      });
+    }
+  }
+
+  // Sort by sortOrder ascending — canonical display order
+  fromDb.sort((a, b) => a.sortOrder - b.sortOrder);
+  return fromDb;
+}
 
 interface Props {
   session?: Session;
@@ -38,18 +113,10 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
     backdrop_url: session?.backdrop_url || '',
   });
 
-  // Build section state from existing sections or empty defaults
-  const [sectionState, setSectionState] = useState<Record<SectionType, { enabled: boolean; content: SectionContent }>>(() => {
-    const state: Record<string, { enabled: boolean; content: SectionContent }> = {};
-    for (const type of SECTION_TYPES) {
-      const existing = sections.find(s => s.type === type);
-      state[type] = {
-        enabled: existing?.enabled ?? true,
-        content: existing?.content || (type === 'facts' ? { cards: [] } : { text: '' }),
-      };
-    }
-    return state as Record<SectionType, { enabled: boolean; content: SectionContent }>;
-  });
+  const initialSlots = useMemo(() => initSlots(sections), [sections]);
+  const [slots, setSlots] = useState<SectionSlot[]>(initialSlots);
+  const [activeTab, setActiveTab] = useState<string>(() => initialSlots[0]?.id ?? '');
+  const [deletedCustomIds, setDeletedCustomIds] = useState<string[]>([]);
 
   const [saving, setSaving] = useState(false);
 
@@ -57,18 +124,86 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
     setForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const updateSectionContent = (type: SectionType, content: SectionContent) => {
-    setSectionState(prev => ({
-      ...prev,
-      [type]: { ...prev[type], content },
-    }));
+  const updateSlot = (id: string, patch: Partial<SectionSlot>) => {
+    setSlots((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, ...patch, _dirty: true } : s)),
+    );
   };
 
-  const toggleSectionEnabled = (type: SectionType, enabled: boolean) => {
-    setSectionState(prev => ({
-      ...prev,
-      [type]: { ...prev[type], enabled },
-    }));
+  const updateSlotContent = (id: string, content: SectionContent) => {
+    updateSlot(id, { content });
+  };
+
+  const toggleSlotEnabled = (id: string, enabled: boolean) => {
+    updateSlot(id, { enabled });
+  };
+
+  const moveSlot = (id: string, direction: -1 | 1) => {
+    setSlots((prev) => {
+      const visible = prev.filter((s) => !s._deleted);
+      const idx = visible.findIndex((s) => s.id === id);
+      if (idx === -1) return prev;
+      const swapWith = idx + direction;
+      if (swapWith < 0 || swapWith >= visible.length) return prev;
+
+      const reordered = [...visible];
+      [reordered[idx], reordered[swapWith]] = [reordered[swapWith], reordered[idx]];
+
+      const deleted = prev.filter((s) => s._deleted);
+      const withOrder = reordered.map((s, i) => ({ ...s, sortOrder: i, _dirty: true }));
+      return [...withOrder, ...deleted];
+    });
+  };
+
+  const addCustomSection = () => {
+    setSlots((prev) => {
+      const visible = prev.filter((s) => !s._deleted);
+      const customCount = visible.filter((s) => s.type === 'custom').length;
+      if (customCount >= MAX_CUSTOM_SECTIONS_PER_SESSION) {
+        toast.error(`Максимум ${MAX_CUSTOM_SECTIONS_PER_SESSION} кастомных разделов`);
+        return prev;
+      }
+      const newSlot: SectionSlot = {
+        id: tempId(),
+        type: 'custom',
+        title: '',
+        icon: DEFAULT_CUSTOM_ICON,
+        content: { text: '' },
+        enabled: true,
+        sortOrder: visible.length,
+        _isNew: true,
+        _dirty: true,
+      };
+      const next = [...visible, newSlot, ...prev.filter((s) => s._deleted)];
+      setActiveTab(newSlot.id);
+      return next;
+    });
+  };
+
+  const removeSlot = (id: string) => {
+    setSlots((prev) => {
+      const target = prev.find((s) => s.id === id);
+      if (!target) return prev;
+      if (target.type !== 'custom') {
+        toast.error('Встроенные разделы нельзя удалить — только выключить');
+        return prev;
+      }
+      if (target._isNew) {
+        const next = prev.filter((s) => s.id !== id);
+        if (activeTab === id) {
+          const firstVisible = next.find((s) => !s._deleted);
+          setActiveTab(firstVisible?.id ?? '');
+        }
+        return next;
+      }
+      setDeletedCustomIds((ids) => [...ids, id]);
+      const next = prev.map((s) => (s.id === id ? { ...s, _deleted: true, _dirty: true } : s));
+      if (activeTab === id) {
+        const firstVisible = next.find((s) => !s._deleted);
+        setActiveTab(firstVisible?.id ?? '');
+      }
+      return next;
+    });
   };
 
   const handleSave = async (publish: boolean) => {
@@ -105,19 +240,58 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
         }
       }
 
-      // Save sections
-      for (const type of SECTION_TYPES) {
-        const s = sectionState[type];
-        await upsertSection({
+      // Recompute sortOrder from visible array index (captures reorder moves)
+      const visible = slots.filter((s) => !s._deleted);
+      const withOrder = visible.map((s, i) => ({ ...s, sortOrder: i }));
+
+      // Per-slot validation
+      for (let i = 0; i < withOrder.length; i++) {
+        const s = withOrder[i];
+        if (s.type === 'custom') {
+          if (!s.title?.trim()) {
+            toast.error(`Кастомный раздел требует заголовок (таб ${i + 1})`);
+            setSaving(false);
+            return;
+          }
+          if (!s.content.text?.trim()) {
+            toast.error(`Кастомный раздел требует текст (таб ${i + 1})`);
+            setSaving(false);
+            return;
+          }
+        }
+      }
+
+      // 1. Delete marked custom sections
+      for (const id of deletedCustomIds) {
+        const r = await deleteCustomSection(sessionId!, id);
+        if (r.error) {
+          toast.error(`Ошибка удаления раздела: ${r.error}`);
+          setSaving(false);
+          return;
+        }
+      }
+
+      // 2. Upsert all visible slots
+      for (const s of withOrder) {
+        const r = await upsertSection({
+          id: s._isNew ? undefined : s.id,
           sessionId: sessionId!,
-          type,
-          title: null,
-          icon: null,
+          type: s.type,
+          title: s.title,
+          icon: s.icon,
           content: s.content,
           enabled: s.enabled,
-          sortOrder: SECTION_TYPES.indexOf(type),
+          sortOrder: s.sortOrder,
         });
+        if (r.error) {
+          toast.error(`Ошибка сохранения раздела: ${r.error}`);
+          setSaving(false);
+          return;
+        }
       }
+
+      // After successful save, clear deleted list
+      setDeletedCustomIds([]);
 
       toast.success(publish ? 'Встреча опубликована' : 'Встреча сохранена');
       router.push('/admin/session/new');
@@ -242,43 +416,83 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
         <h2 className="text-xl mb-6 font-bold">Разделы контента</h2>
 
-        <Tabs defaultValue="director" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="bg-zinc-800 flex-wrap h-auto">
-            {SECTION_TYPES.map((type) => (
-              <TabsTrigger
-                key={type}
-                value={type}
-                className="data-[state=active]:bg-zinc-700"
-              >
-                {SECTION_CONFIG[type].title}
-                {!sectionState[type].enabled && ' (выкл)'}
-              </TabsTrigger>
-            ))}
+            {slots
+              .filter((s) => !s._deleted)
+              .map((s) => {
+                const displayTitle =
+                  getSectionTitle({
+                    id: s.id,
+                    session_id: '',
+                    type: s.type,
+                    title: s.title,
+                    icon: s.icon,
+                    enabled: s.enabled,
+                    sort_order: s.sortOrder,
+                    content: s.content,
+                  }) || '(без названия)';
+                return (
+                  <TabsTrigger
+                    key={s.id}
+                    value={s.id}
+                    className="data-[state=active]:bg-zinc-700"
+                  >
+                    {displayTitle}
+                    {!s.enabled && ' (выкл)'}
+                  </TabsTrigger>
+                );
+              })}
+            <button
+              type="button"
+              onClick={addCustomSection}
+              className="ml-2 px-3 py-1.5 text-xs rounded hover:bg-zinc-700 text-amber-500"
+            >
+              <Plus className="inline w-3 h-3 mr-1" />
+              Добавить раздел
+            </button>
           </TabsList>
 
-          {SECTION_TYPES.map((type) => (
-            <TabsContent key={type} value={type}>
-              <div className="py-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Switch
-                      checked={sectionState[type].enabled}
-                      onCheckedChange={(enabled) => toggleSectionEnabled(type, enabled)}
-                    />
-                    <Label>Включить раздел</Label>
+          {slots
+            .filter((s) => !s._deleted)
+            .map((s) => (
+              <TabsContent key={s.id} value={s.id}>
+                <div className="py-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <Switch
+                        checked={s.enabled}
+                        onCheckedChange={(enabled) => toggleSlotEnabled(s.id, enabled)}
+                      />
+                      <Label>Включить раздел</Label>
+                    </div>
                   </div>
-                </div>
 
-                {sectionState[type].enabled && (
-                  <SectionEditor
-                    type={type}
-                    content={sectionState[type].content}
-                    onChange={(content) => updateSectionContent(type, content)}
-                  />
-                )}
-              </div>
-            </TabsContent>
-          ))}
+                  {s.enabled && s.type !== 'custom' && (
+                    <SectionEditor
+                      type={s.type}
+                      content={s.content}
+                      onChange={(content) => updateSlotContent(s.id, content)}
+                    />
+                  )}
+
+                  {s.enabled && s.type === 'custom' && (
+                    <div>
+                      <Label>Текст (Markdown)</Label>
+                      <Textarea
+                        value={s.content.text || ''}
+                        onChange={(e) =>
+                          updateSlotContent(s.id, { ...s.content, text: e.target.value })
+                        }
+                        placeholder="Основной текст раздела... Поддерживает **жирный**, *курсив*, [ссылки](url), списки и другой Markdown"
+                        className="bg-zinc-800 border-zinc-700 min-h-40"
+                      />
+                      <p className="text-xs text-zinc-500 mt-1">Поддерживает Markdown</p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            ))}
         </Tabs>
       </div>
 
