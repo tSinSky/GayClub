@@ -91,6 +91,89 @@ function initSlots(existing: SessionSection[]): SectionSlot[] {
   return fromDb;
 }
 
+function SectionHeaderControls({
+  slot,
+  index,
+  total,
+  onTitleChange,
+  onIconChange,
+  onMoveUp,
+  onMoveDown,
+  onRemove,
+}: {
+  slot: SectionSlot;
+  index: number;
+  total: number;
+  onTitleChange: (title: string) => void;
+  onIconChange: (icon: IconName) => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onRemove: () => void;
+}) {
+  const iconName = getSectionIconName(slot);
+  const placeholder =
+    slot.type !== 'custom'
+      ? SECTION_CONFIG[slot.type as Exclude<SectionType, 'custom'>]?.title ?? ''
+      : 'Например: Почему стоит посмотреть';
+
+  return (
+    <div className="flex flex-wrap items-start gap-2 mb-4 p-3 rounded-md bg-zinc-900/50 border border-zinc-800">
+      <IconPicker value={iconName} onChange={onIconChange} />
+      <div className="flex-1 min-w-[200px]">
+        <Label className="text-xs text-zinc-500">Заголовок раздела</Label>
+        <Input
+          value={slot.title ?? ''}
+          onChange={(e) => onTitleChange(e.target.value)}
+          placeholder={placeholder}
+          maxLength={100}
+          className="bg-zinc-800 border-zinc-700"
+        />
+        {slot.type !== 'custom' && (
+          <p className="text-[11px] text-zinc-600 mt-1">
+            Оставьте пустым для дефолтного заголовка
+          </p>
+        )}
+      </div>
+      <div className="flex gap-1 pt-5">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={onMoveUp}
+          disabled={index === 0}
+          aria-label="Переместить вверх"
+          className="h-10 w-10 border-zinc-700"
+        >
+          <ArrowUp className="w-4 h-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={onMoveDown}
+          disabled={index === total - 1}
+          aria-label="Переместить вниз"
+          className="h-10 w-10 border-zinc-700"
+        >
+          <ArrowDown className="w-4 h-4" />
+        </Button>
+        {slot.type === 'custom' && (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={onRemove}
+            aria-label="Удалить раздел"
+            className="h-10 w-10 border-red-900/50 text-red-400 hover:bg-red-950/30"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   session?: Session;
   sections?: SessionSection[];
@@ -132,6 +215,15 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
 
   const updateSlotContent = (id: string, content: SectionContent) => {
     updateSlot(id, { content });
+  };
+
+  const updateSlotTitle = (id: string, title: string) => {
+    // Empty string → null (falls back to default)
+    updateSlot(id, { title: title.trim() === '' ? null : title });
+  };
+
+  const updateSlotIcon = (id: string, icon: IconName) => {
+    updateSlot(id, { icon });
   };
 
   const toggleSlotEnabled = (id: string, enabled: boolean) => {
@@ -445,9 +537,20 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
 
           {slots
             .filter((s) => !s._deleted)
-            .map((s) => (
+            .map((s, idx, arr) => (
               <TabsContent key={s.id} value={s.id}>
                 <div className="py-4">
+                  <SectionHeaderControls
+                    slot={s}
+                    index={idx}
+                    total={arr.length}
+                    onTitleChange={(title) => updateSlotTitle(s.id, title)}
+                    onIconChange={(icon) => updateSlotIcon(s.id, icon)}
+                    onMoveUp={() => moveSlot(s.id, -1)}
+                    onMoveDown={() => moveSlot(s.id, 1)}
+                    onRemove={() => removeSlot(s.id)}
+                  />
+
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <Switch
@@ -460,7 +563,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
 
                   {s.enabled && s.type !== 'custom' && (
                     <SectionEditor
-                      type={s.type}
+                      type={s.type as Exclude<SectionType, 'custom'>}
                       content={s.content}
                       onChange={(content) => updateSlotContent(s.id, content)}
                     />
