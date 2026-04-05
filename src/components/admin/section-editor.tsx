@@ -31,6 +31,7 @@ interface Props {
   type: SectionType;
   content: SectionContent;
   onChange: (content: SectionContent) => void;
+  sessionId?: string;
 }
 
 /* ================================================================== */
@@ -163,7 +164,10 @@ function EmptyList({
 /* Main editor                                                         */
 /* ================================================================== */
 
-export default function SectionEditor({ type, content, onChange }: Props) {
+export default function SectionEditor({ type, content, onChange, sessionId }: Props) {
+  // sessionId will be used by RichEditor in Task 8
+  void sessionId;
+
   const updateText = (text: string) => {
     onChange({ ...content, text });
   };

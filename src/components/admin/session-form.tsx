@@ -497,6 +497,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
                           type={type}
                           content={sectionState[type].content}
                           onChange={(content) => updateSectionContent(type, content)}
+                          sessionId={session?.id}
                         />
                       ) : (
                         <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
