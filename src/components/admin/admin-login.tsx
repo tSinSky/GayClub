@@ -25,7 +25,7 @@ export default function AdminLogin() {
       setLoading(false);
     } else {
       toast.success('Добро пожаловать!');
-      router.push('/admin/session/new');
+      router.push('/admin');
       router.refresh();
     }
   };

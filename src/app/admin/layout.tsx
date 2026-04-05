@@ -38,12 +38,12 @@ export default async function AdminLayout({
       <nav className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link href="/admin/session/new" className="flex items-center gap-2 text-amber-500">
+            <Link href="/admin" className="flex items-center gap-2 text-amber-500">
               <Film className="w-5 h-5" />
               <span className="font-bold">Киноклуб</span>
             </Link>
             <div className="flex items-center gap-1">
-              <Link href="/admin/session/new">
+              <Link href="/admin">
                 <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
                   <List className="w-4 h-4 mr-2" />
                   Встречи

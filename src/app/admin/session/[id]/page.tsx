@@ -20,10 +20,5 @@ export default async function AdminEditSessionPage({
     notFound();
   }
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Редактировать: {session.title}</h1>
-      <SessionForm session={session} sections={sections} bingoItems={bingoItems} />
-    </div>
-  );
+  return <SessionForm session={session} sections={sections} bingoItems={bingoItems} />;
 }

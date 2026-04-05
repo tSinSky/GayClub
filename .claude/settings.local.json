@@ -42,7 +42,15 @@
       "Bash(curl:*)",
       "Bash(for env in production preview development)",
       "Bash(do echo \"$NEXT_PUBLIC_SUPABASE_URL\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(npx next:*)",
+      "Bash(npx eslint:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(printf '\\\\n# git worktrees\\\\n.worktrees/\\\\n')",
+      "Bash(git worktree:*)",
+      "Bash(npm run:*)",
+      "Bash(git checkout:*)",
+      "Bash(node /tmp/check_icons.js)"
     ]
   }
 }
