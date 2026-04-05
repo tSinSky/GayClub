@@ -736,7 +736,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
         >
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="-mx-1 mb-6 overflow-x-auto pb-1">
-              <TabsList className="inline-flex h-auto w-auto flex-wrap gap-1 rounded-xl border border-zinc-800 bg-zinc-950/60 p-1.5">
+              <TabsList className="inline-flex h-auto w-auto flex-wrap gap-1 rounded-xl border border-zinc-800 bg-zinc-950/60 p-2">
                 {visibleSlots.map((s) => {
                   const displayTitle = getSectionTitle(s) || '(без названия)';
                   return (
