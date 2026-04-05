@@ -47,6 +47,16 @@ type SectionSlot = {
   _isNew?: boolean;
 };
 
+// Deterministic id for a missing built-in placeholder. Each built-in type
+// appears at most once per session, so `new-${type}` is unique within the
+// form state. Used only for server-rendered placeholder slots, so it must
+// be stable between SSR and client hydration — Math.random would mismatch.
+function builtinPlaceholderId(type: SectionType) {
+  return `new-${type}`;
+}
+
+// Client-only random id for newly added custom sections. Safe to use because
+// addCustomSection runs in response to user interaction after hydration.
 function tempId() {
   return `new-${Math.random().toString(36).slice(2, 10)}`;
 }
@@ -73,7 +83,7 @@ function initSlots(existing: SessionSection[]): SectionSlot[] {
   for (const type of BUILTIN_SECTION_TYPES) {
     if (!existingTypes.has(type)) {
       fromDb.push({
-        id: tempId(),
+        id: builtinPlaceholderId(type),
         type,
         title: null,
         icon: null,
