@@ -11,7 +11,8 @@ import FactsSection from '@/components/sections/facts-section';
 import { Button } from '@/components/ui/button';
 import { Dices } from 'lucide-react';
 import TableOfContents from '@/components/table-of-contents';
-import { SECTION_CONFIG } from '@/lib/constants';
+import CustomSection from '@/components/sections/custom-section';
+import { getSectionTitle, getSectionIcon } from '@/lib/section-display';
 import SessionRatings from '@/components/session-ratings';
 import { getSession } from '@/lib/actions/sessions';
 import { getSessionSections } from '@/lib/actions/sections';
@@ -27,6 +28,7 @@ const SECTION_COMPONENTS: Record<SectionType, React.ComponentType<{ content: Sec
   influence: InfluenceSection,
   themes: ThemesSection,
   facts: FactsSection,
+  custom: CustomSection,
 };
 
 export default async function SessionPage({
@@ -71,16 +73,16 @@ export default async function SessionPage({
       {/* Sections */}
       <div className="max-w-5xl mx-auto px-6 py-16 space-y-20">
         {enabledSections.map((section, index) => {
-          const config = SECTION_CONFIG[section.type];
-          const Icon = config.icon;
+          const Icon = getSectionIcon(section);
+          const title = getSectionTitle(section);
           const Component = SECTION_COMPONENTS[section.type];
 
           return (
-            <div key={section.id} id={`section-${section.type}`} className="scroll-mt-20">
+            <div key={section.id} id={`section-${section.id}`} className="scroll-mt-20">
               {/* Section Header */}
               <div className="flex items-center gap-3 mb-8 pb-4 border-b border-amber-500/20">
                 <Icon className="w-6 h-6 text-amber-500" />
-                <h2 className="text-3xl tracking-tight font-bold">{config.title}</h2>
+                <h2 className="text-3xl tracking-tight font-bold">{title}</h2>
                 <div className="ml-auto text-sm text-zinc-600">
                   {index + 1} / {enabledSections.length}
                 </div>
@@ -103,7 +105,7 @@ export default async function SessionPage({
       </div>
 
       {/* Table of Contents */}
-      <TableOfContents sections={enabledSections.map(s => ({ type: s.type, content: s.content }))} />
+      <TableOfContents sections={enabledSections} />
 
       {/* Floating Rate Button */}
       <FloatingRateButton

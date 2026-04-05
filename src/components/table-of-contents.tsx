@@ -1,16 +1,13 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Star } from 'lucide-react';
-import { SECTION_CONFIG } from '@/lib/constants';
 import { slugify } from '@/components/ui/markdown-content';
-import type { SectionType, SectionContent } from '@/types';
+import { getSectionTitle } from '@/lib/section-display';
+import type { SessionSection } from '@/types';
 
 interface TOCProps {
-  sections: Array<{
-    type: SectionType;
-    content: SectionContent;
-  }>;
+  sections: SessionSection[];
 }
 
 interface TOCItem {
@@ -19,15 +16,13 @@ interface TOCItem {
   level: number; // 0 = section, 1 = h2, 2 = h3
 }
 
-function buildTOCItems(sections: TOCProps['sections']): TOCItem[] {
+function buildTOCItems(sections: SessionSection[]): TOCItem[] {
   const items: TOCItem[] = [];
-  // Track slug counts per-section to match MarkdownContent's uniqueSlug
-  // Each MarkdownContent instance has its own counter, so we reset per section
+
   for (const section of sections) {
-    const config = SECTION_CONFIG[section.type];
     items.push({
-      id: `section-${section.type}`,
-      label: config.title,
+      id: `section-${section.id}`,
+      label: getSectionTitle(section),
       level: 0,
     });
 
@@ -58,8 +53,7 @@ function buildTOCItems(sections: TOCProps['sections']): TOCItem[] {
 }
 
 export default function TableOfContents({ sections }: TOCProps) {
-  const itemsRef = useRef<TOCItem[]>([]);
-  itemsRef.current = buildTOCItems(sections);
+  const items = useMemo(() => buildTOCItems(sections), [sections]);
 
   const handleClick = useCallback((id: string) => {
     const el = document.getElementById(id);
@@ -67,8 +61,6 @@ export default function TableOfContents({ sections }: TOCProps) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
-
-  const items = itemsRef.current;
 
   return (
     <nav className="hidden xl:block fixed top-1/2 -translate-y-1/2 right-6 2xl:right-10 z-40 w-56 2xl:w-64 opacity-40 hover:opacity-100 transition-opacity duration-300">
