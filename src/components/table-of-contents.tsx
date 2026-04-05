@@ -2,15 +2,12 @@
 
 import { useRef, useCallback } from 'react';
 import { Star } from 'lucide-react';
-import { SECTION_CONFIG, ICON_LIBRARY } from '@/lib/constants';
 import { slugify } from '@/components/ui/markdown-content';
-import type { SectionType, SectionContent } from '@/types';
+import { getSectionTitle } from '@/lib/section-display';
+import type { SessionSection } from '@/types';
 
 interface TOCProps {
-  sections: Array<{
-    type: SectionType;
-    content: SectionContent;
-  }>;
+  sections: SessionSection[];
 }
 
 interface TOCItem {
@@ -19,15 +16,13 @@ interface TOCItem {
   level: number; // 0 = section, 1 = h2, 2 = h3
 }
 
-function buildTOCItems(sections: TOCProps['sections']): TOCItem[] {
+function buildTOCItems(sections: SessionSection[]): TOCItem[] {
   const items: TOCItem[] = [];
-  // Track slug counts per-section to match MarkdownContent's uniqueSlug
-  // Each MarkdownContent instance has its own counter, so we reset per section
+
   for (const section of sections) {
-    const config = SECTION_CONFIG[section.type as Exclude<typeof section.type, 'custom'>];
     items.push({
-      id: `section-${section.type}`,
-      label: config.title,
+      id: `section-${section.id}`,
+      label: getSectionTitle(section),
       level: 0,
     });
 
