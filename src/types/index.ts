@@ -29,6 +29,11 @@ export interface SessionSection {
 
 export interface SectionContent {
   text?: string;
+  /**
+   * @deprecated Inline images now live inside `text` as markdown `![](url)`.
+   * Kept only so `scripts/migrate-inline-images.ts` can read the old shape.
+   * Remove after the migration has run on all environments.
+   */
   images?: string[];
   videos?: VideoEmbed[];
   quotes?: Quote[];

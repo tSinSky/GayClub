@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
+import { RichEditor } from '@/components/ui/rich-editor';
 import {
   Save,
   Eye,
@@ -799,19 +799,21 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
                         type={s.type}
                         content={s.content}
                         onChange={(content) => updateSlotContent(s.id, content)}
+                        sessionId={session?.id}
                       />
                     ) : (
                       <div>
-                        <Label className="text-zinc-300">Текст (Markdown)</Label>
-                        <Textarea
+                        <Label className="mb-2 text-zinc-300">Текст</Label>
+                        <RichEditor
                           value={s.content.text || ''}
-                          onChange={(e) =>
-                            updateSlotContent(s.id, { ...s.content, text: e.target.value })
+                          onChange={(md) =>
+                            updateSlotContent(s.id, { ...s.content, text: md })
                           }
-                          placeholder="Основной текст раздела... Поддерживает **жирный**, *курсив*, [ссылки](url), списки и другой Markdown"
-                          className="mt-2 min-h-40 border-zinc-800 bg-zinc-950/60 text-zinc-100"
+                          features={['bold', 'italic', 'link', 'list', 'heading', 'blockquote', 'image']}
+                          placeholder="Основной текст раздела…"
+                          className="min-h-40"
+                          sessionId={session?.id}
                         />
-                        <p className="mt-1 text-xs text-zinc-500">Поддерживает Markdown</p>
                       </div>
                     )
                   ) : (

@@ -1,9 +1,9 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { RichEditor } from '@/components/ui/rich-editor';
 import {
   Plus,
   Trash2,
@@ -31,6 +31,7 @@ interface Props {
   type: SectionType;
   content: SectionContent;
   onChange: (content: SectionContent) => void;
+  sessionId?: string;
 }
 
 /* ================================================================== */
@@ -163,7 +164,7 @@ function EmptyList({
 /* Main editor                                                         */
 /* ================================================================== */
 
-export default function SectionEditor({ type, content, onChange }: Props) {
+export default function SectionEditor({ type, content, onChange, sessionId }: Props) {
   const updateText = (text: string) => {
     onChange({ ...content, text });
   };
@@ -190,21 +191,6 @@ export default function SectionEditor({ type, content, onChange }: Props) {
   const removeFilm = (index: number) => {
     const films = (content.director?.filmography || []).filter((_, i) => i !== index);
     updateDirector({ filmography: films });
-  };
-
-  /* --- Image helpers --- */
-  const addImage = () => {
-    onChange({ ...content, images: [...(content.images || []), ''] });
-  };
-
-  const updateImage = (index: number, url: string) => {
-    const images = [...(content.images || [])];
-    images[index] = url;
-    onChange({ ...content, images });
-  };
-
-  const removeImage = (index: number) => {
-    onChange({ ...content, images: (content.images || []).filter((_, i) => i !== index) });
   };
 
   /* --- Video helpers --- */
@@ -270,31 +256,18 @@ export default function SectionEditor({ type, content, onChange }: Props) {
       {/* Main text                                                     */}
       {/* ============================================================ */}
       <div>
-        <div className="mb-2 flex items-center justify-between">
-          <Label className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400">
-            <Type className="size-3" />
-            Основной текст
-          </Label>
-          <div className="hidden items-center gap-1.5 md:flex">
-            {['**жирный**', '*курсив*', '## заголовок', '- список', '[текст](url)'].map((hint) => (
-              <span
-                key={hint}
-                className="rounded border border-zinc-800 bg-zinc-900/60 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500"
-              >
-                {hint}
-              </span>
-            ))}
-          </div>
-        </div>
-        <Textarea
+        <Label className="mb-2 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400">
+          <Type className="size-3" />
+          Основной текст
+        </Label>
+        <RichEditor
           value={content.text || ''}
-          onChange={(e) => updateText(e.target.value)}
-          placeholder="Основной текст раздела… Поддерживает Markdown: **жирный**, *курсив*, [ссылки](url), списки."
-          className="min-h-36 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+          onChange={updateText}
+          features={['bold', 'italic', 'link', 'list', 'heading', 'blockquote', 'image']}
+          placeholder="Основной текст раздела…"
+          className="min-h-36"
+          sessionId={sessionId}
         />
-        <p className="mt-2 text-[11px] text-zinc-600 md:hidden">
-          Поддерживает Markdown: **жирный**, *курсив*, ## заголовки, списки, [ссылки](url)
-        </p>
       </div>
 
       {/* ============================================================ */}
@@ -336,11 +309,13 @@ export default function SectionEditor({ type, content, onChange }: Props) {
           </div>
 
           <FieldWrap label="Биография" icon={FileText}>
-            <Textarea
+            <RichEditor
               value={content.director?.bio || ''}
-              onChange={(e) => updateDirector({ bio: e.target.value })}
-              placeholder="Биография режиссёра… (поддерживает Markdown)"
-              className="min-h-28 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+              onChange={(md) => updateDirector({ bio: md })}
+              features={['bold', 'italic', 'link', 'list', 'image']}
+              placeholder="Биография режиссёра…"
+              className="min-h-28"
+              sessionId={sessionId}
             />
           </FieldWrap>
 
@@ -415,52 +390,6 @@ export default function SectionEditor({ type, content, onChange }: Props) {
       {/* ============================================================ */}
       {type === 'cinematography' && (
         <div className="space-y-6">
-          {/* Images */}
-          <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
-            <SubsectionHeader
-              icon={ImageIcon}
-              title="Изображения кадров"
-              hint="Скриншоты или кадры из фильма"
-              action={<AddButton onClick={addImage} />}
-            />
-            {(content.images || []).length === 0 ? (
-              <EmptyList icon={ImageIcon} label="Изображения не добавлены" />
-            ) : (
-              <div className="space-y-2.5">
-                {(content.images || []).map((img, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-2 transition-colors hover:border-zinc-700/70"
-                  >
-                    <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
-                      {img ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={img}
-                          alt=""
-                          className="h-full w-full object-cover"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <ImageIcon className="size-4 text-zinc-700" />
-                      )}
-                    </div>
-                    <IconInput
-                      icon={LinkIcon}
-                      value={img}
-                      onChange={(e) => updateImage(i, e.target.value)}
-                      placeholder="URL изображения"
-                      className="font-mono"
-                    />
-                    <DeleteIconButton onClick={() => removeImage(i)} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
           {/* Videos */}
           <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
             <SubsectionHeader
@@ -526,11 +455,13 @@ export default function SectionEditor({ type, content, onChange }: Props) {
                         <QuoteIcon className="size-3" />
                         Текст цитаты
                       </Label>
-                      <Textarea
+                      <RichEditor
                         value={quote.text}
-                        onChange={(e) => updateQuote(i, 'text', e.target.value)}
+                        onChange={(md) => updateQuote(i, 'text', md)}
+                        features={['bold', 'italic']}
                         placeholder="«Всё, что я видел, исчезнет во времени, как слёзы под дождём…»"
-                        className="min-h-20 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] italic leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                        className="min-h-20"
+                        sessionId={sessionId}
                       />
                     </div>
 
@@ -611,11 +542,13 @@ export default function SectionEditor({ type, content, onChange }: Props) {
                     </FieldWrap>
 
                     <FieldWrap label="Описание" icon={FileText}>
-                      <Textarea
+                      <RichEditor
                         value={card.description}
-                        onChange={(e) => updateCard(i, 'description', e.target.value)}
-                        placeholder="Опишите факт… (поддерживает Markdown)"
-                        className="min-h-24 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                        onChange={(md) => updateCard(i, 'description', md)}
+                        features={['bold', 'italic', 'link', 'list', 'image']}
+                        placeholder="Опишите факт…"
+                        className="min-h-24"
+                        sessionId={sessionId}
                       />
                     </FieldWrap>
 
