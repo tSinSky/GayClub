@@ -6,15 +6,17 @@ import {
   Music, Palette, Quote, Bookmark,
   type LucideIcon,
 } from 'lucide-react';
-import type { SectionType, IconName, RatingCategory } from '@/types';
+import type { SectionType, RatingCategory } from '@/types';
 
-export const ICON_LIBRARY: Record<IconName, LucideIcon> = {
+export const ICON_LIBRARY = {
   Film, Clapperboard, Camera, Video, Projector,
   BookOpen, Lightbulb, Sparkles, Star, Heart,
   Award, Crown, Feather, Eye, Compass,
   Target, Zap, Flame, Moon, Sun,
   Music, Palette, Quote, Bookmark,
-};
+} satisfies Record<string, LucideIcon>;
+
+export type IconName = keyof typeof ICON_LIBRARY;
 
 export const DEFAULT_CUSTOM_ICON: IconName = 'Bookmark';
 

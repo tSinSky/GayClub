@@ -1,5 +1,5 @@
-import { SECTION_CONFIG, ICON_LIBRARY, DEFAULT_CUSTOM_ICON } from './constants';
-import type { SessionSection, IconName, SectionType } from '@/types';
+import { SECTION_CONFIG, ICON_LIBRARY, DEFAULT_CUSTOM_ICON, type IconName } from './constants';
+import type { SessionSection, SectionType } from '@/types';
 import type { LucideIcon } from 'lucide-react';
 
 /**

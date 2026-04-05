@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Star } from 'lucide-react';
 import { slugify } from '@/components/ui/markdown-content';
 import { getSectionTitle } from '@/lib/section-display';
@@ -53,8 +53,7 @@ function buildTOCItems(sections: SessionSection[]): TOCItem[] {
 }
 
 export default function TableOfContents({ sections }: TOCProps) {
-  const itemsRef = useRef<TOCItem[]>([]);
-  itemsRef.current = buildTOCItems(sections);
+  const items = useMemo(() => buildTOCItems(sections), [sections]);
 
   const handleClick = useCallback((id: string) => {
     const el = document.getElementById(id);
@@ -62,8 +61,6 @@ export default function TableOfContents({ sections }: TOCProps) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
-
-  const items = itemsRef.current;
 
   return (
     <nav className="hidden xl:block fixed top-1/2 -translate-y-1/2 right-6 2xl:right-10 z-40 w-56 2xl:w-64 opacity-40 hover:opacity-100 transition-opacity duration-300">

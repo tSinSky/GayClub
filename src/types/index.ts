@@ -27,13 +27,6 @@ export interface SessionSection {
   content: SectionContent;
 }
 
-export type IconName =
-  | 'Film' | 'Clapperboard' | 'Camera' | 'Video' | 'Projector'
-  | 'BookOpen' | 'Lightbulb' | 'Sparkles' | 'Star' | 'Heart'
-  | 'Award' | 'Crown' | 'Feather' | 'Eye' | 'Compass'
-  | 'Target' | 'Zap' | 'Flame' | 'Moon' | 'Sun'
-  | 'Music' | 'Palette' | 'Quote' | 'Bookmark';
-
 export interface SectionContent {
   text?: string;
   images?: string[];
