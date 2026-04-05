@@ -1,6 +1,5 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -272,31 +271,18 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
       {/* Main text                                                     */}
       {/* ============================================================ */}
       <div>
-        <div className="mb-2 flex items-center justify-between">
-          <Label className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400">
-            <Type className="size-3" />
-            Основной текст
-          </Label>
-          <div className="hidden items-center gap-1.5 md:flex">
-            {['**жирный**', '*курсив*', '## заголовок', '- список', '[текст](url)'].map((hint) => (
-              <span
-                key={hint}
-                className="rounded border border-zinc-800 bg-zinc-900/60 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500"
-              >
-                {hint}
-              </span>
-            ))}
-          </div>
-        </div>
-        <Textarea
+        <Label className="mb-2 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-400">
+          <Type className="size-3" />
+          Основной текст
+        </Label>
+        <RichEditor
           value={content.text || ''}
-          onChange={(e) => updateText(e.target.value)}
-          placeholder="Основной текст раздела… Поддерживает Markdown: **жирный**, *курсив*, [ссылки](url), списки."
-          className="min-h-36 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+          onChange={updateText}
+          features={['bold', 'italic', 'link', 'list', 'heading', 'blockquote', 'image']}
+          placeholder="Основной текст раздела…"
+          className="min-h-36"
+          sessionId={sessionId}
         />
-        <p className="mt-2 text-[11px] text-zinc-600 md:hidden">
-          Поддерживает Markdown: **жирный**, *курсив*, ## заголовки, списки, [ссылки](url)
-        </p>
       </div>
 
       {/* ============================================================ */}
@@ -338,11 +324,13 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
           </div>
 
           <FieldWrap label="Биография" icon={FileText}>
-            <Textarea
+            <RichEditor
               value={content.director?.bio || ''}
-              onChange={(e) => updateDirector({ bio: e.target.value })}
-              placeholder="Биография режиссёра… (поддерживает Markdown)"
-              className="min-h-28 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+              onChange={(md) => updateDirector({ bio: md })}
+              features={['bold', 'italic', 'link', 'list', 'image']}
+              placeholder="Биография режиссёра…"
+              className="min-h-28"
+              sessionId={sessionId}
             />
           </FieldWrap>
 
@@ -615,11 +603,13 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
                     </FieldWrap>
 
                     <FieldWrap label="Описание" icon={FileText}>
-                      <Textarea
+                      <RichEditor
                         value={card.description}
-                        onChange={(e) => updateCard(i, 'description', e.target.value)}
-                        placeholder="Опишите факт… (поддерживает Markdown)"
-                        className="min-h-24 resize-y border-zinc-800 bg-zinc-950/60 px-4 py-3 text-[13px] leading-relaxed text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                        onChange={(md) => updateCard(i, 'description', md)}
+                        features={['bold', 'italic', 'link', 'list', 'image']}
+                        placeholder="Опишите факт…"
+                        className="min-h-24"
+                        sessionId={sessionId}
                       />
                     </FieldWrap>
 
