@@ -2,7 +2,7 @@
 
 import { useRef, useCallback } from 'react';
 import { Star } from 'lucide-react';
-import { SECTION_CONFIG } from '@/lib/constants';
+import { SECTION_CONFIG, ICON_LIBRARY } from '@/lib/constants';
 import { slugify } from '@/components/ui/markdown-content';
 import type { SectionType, SectionContent } from '@/types';
 
@@ -24,7 +24,7 @@ function buildTOCItems(sections: TOCProps['sections']): TOCItem[] {
   // Track slug counts per-section to match MarkdownContent's uniqueSlug
   // Each MarkdownContent instance has its own counter, so we reset per section
   for (const section of sections) {
-    const config = SECTION_CONFIG[section.type];
+    const config = SECTION_CONFIG[section.type as Exclude<typeof section.type, 'custom'>];
     items.push({
       id: `section-${section.type}`,
       label: config.title,

@@ -11,7 +11,7 @@ import FactsSection from '@/components/sections/facts-section';
 import { Button } from '@/components/ui/button';
 import { Dices } from 'lucide-react';
 import TableOfContents from '@/components/table-of-contents';
-import { SECTION_CONFIG } from '@/lib/constants';
+import { SECTION_CONFIG, ICON_LIBRARY } from '@/lib/constants';
 import SessionRatings from '@/components/session-ratings';
 import { getSession } from '@/lib/actions/sessions';
 import { getSessionSections } from '@/lib/actions/sections';
@@ -71,8 +71,8 @@ export default async function SessionPage({
       {/* Sections */}
       <div className="max-w-5xl mx-auto px-6 py-16 space-y-20">
         {enabledSections.map((section, index) => {
-          const config = SECTION_CONFIG[section.type];
-          const Icon = config.icon;
+          const config = SECTION_CONFIG[section.type as Exclude<SectionType, 'custom'>];
+          const Icon = ICON_LIBRARY[config.iconName];
           const Component = SECTION_COMPONENTS[section.type];
 
           return (
