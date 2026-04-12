@@ -234,24 +234,26 @@ function SectionHeaderControls({
       : 'Например: Почему стоит посмотреть';
 
   return (
-    <div className="mb-4 flex flex-wrap items-start gap-2 rounded-md border border-zinc-800 bg-zinc-900/50 p-3">
-      <IconPicker value={iconName} onChange={onIconChange} />
-      <div className="min-w-[200px] flex-1">
-        <Label className="text-xs text-zinc-500">Заголовок раздела</Label>
-        <Input
-          value={slot.title ?? ''}
-          onChange={(e) => onTitleChange(e.target.value)}
-          placeholder={placeholder}
-          maxLength={100}
-          className="border-zinc-700 bg-zinc-800"
-        />
-        {slot.type !== 'custom' && (
-          <p className="mt-1 text-[11px] text-zinc-600">
-            Оставьте пустым для дефолтного заголовка
-          </p>
-        )}
+    <div className="mb-4 space-y-2 rounded-md border border-zinc-800 bg-zinc-900/50 p-3 sm:space-y-0 sm:flex sm:flex-wrap sm:items-start sm:gap-2">
+      <div className="flex items-start gap-2 min-w-0 flex-1">
+        <IconPicker value={iconName} onChange={onIconChange} />
+        <div className="min-w-0 flex-1">
+          <Label className="text-xs text-zinc-500">Заголовок раздела</Label>
+          <Input
+            value={slot.title ?? ''}
+            onChange={(e) => onTitleChange(e.target.value)}
+            placeholder={placeholder}
+            maxLength={100}
+            className="border-zinc-700 bg-zinc-800"
+          />
+          {slot.type !== 'custom' && (
+            <p className="mt-1 text-[11px] text-zinc-600">
+              Оставьте пустым для дефолтного заголовка
+            </p>
+          )}
+        </div>
       </div>
-      <div className="flex gap-1 pt-5">
+      <div className="flex gap-1 justify-end sm:pt-5">
         <Button
           type="button"
           variant="outline"
@@ -738,15 +740,15 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
           delay={160}
         >
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="-mx-1 mb-6 overflow-x-auto pb-1">
-              <TabsList className="inline-flex h-auto w-auto flex-wrap gap-1 rounded-xl border border-zinc-800 bg-zinc-950/60 p-1.5">
+            <div className="-mx-1 mb-6 overflow-x-auto pb-1 scrollbar-none">
+              <TabsList className="inline-flex h-auto w-auto gap-1 rounded-xl border border-zinc-800 bg-zinc-950/60 p-1.5 sm:flex-wrap">
                 {visibleSlots.map((s) => {
                   const displayTitle = getSectionTitle(s) || '(без названия)';
                   return (
                     <TabsTrigger
                       key={s.id}
                       value={s.id}
-                      className="group/trigger relative flex h-8 items-center gap-2 rounded-lg px-3 text-[12px] font-medium text-zinc-400 transition-all hover:text-zinc-100 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-300 data-[state=active]:shadow-[inset_0_0_0_1px_rgba(245,158,11,0.25)]"
+                      className="group/trigger relative flex h-8 shrink-0 items-center gap-2 rounded-lg px-3 text-[12px] font-medium whitespace-nowrap text-zinc-400 transition-all hover:text-zinc-100 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-300 data-[state=active]:shadow-[inset_0_0_0_1px_rgba(245,158,11,0.25)]"
                     >
                       <span>{displayTitle}</span>
                       {!s.enabled && (
@@ -768,7 +770,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
 
             {visibleSlots.map((s, idx, arr) => (
               <TabsContent key={s.id} value={s.id} className="mt-0">
-                <div className="rounded-2xl border border-zinc-800/60 bg-zinc-950/40 p-6">
+                <div className="rounded-2xl border border-zinc-800/60 bg-zinc-950/40 p-4 sm:p-6">
                   <SectionHeaderControls
                     slot={s}
                     index={idx}
@@ -845,7 +847,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
             description="Карточки для многопользовательской игры во время просмотра. Участники отмечают события, которые замечают в фильме."
             delay={240}
           >
-            <div className="rounded-2xl border border-zinc-800/60 bg-zinc-950/40 p-6">
+            <div className="rounded-2xl border border-zinc-800/60 bg-zinc-950/40 p-4 sm:p-6">
               <div className="mb-6 flex items-center gap-3 border-b border-zinc-800/60 pb-5">
                 <div className="flex size-9 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900/60">
                   <Dices className="size-4 text-amber-400/80" />
@@ -871,7 +873,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
           aria-hidden
           className="pointer-events-none absolute inset-x-0 -top-12 h-12 bg-gradient-to-t from-zinc-950/70 to-transparent"
         />
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
           <div className="flex items-center gap-3 text-[12px] text-zinc-500">
             <span className="relative flex size-2">
               <span className="absolute inset-0 animate-ping rounded-full bg-amber-400/60" />
@@ -887,7 +889,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
               type="button"
               variant="ghost"
               onClick={goBack}
-              className="text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100"
+              className="hidden text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100 sm:inline-flex"
             >
               Отмена
             </Button>

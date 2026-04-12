@@ -14,8 +14,8 @@ async function LogoutButton() {
   return (
     <form action={handleLogout}>
       <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
-        <LogOut className="w-4 h-4 mr-2" />
-        Выйти
+        <LogOut className="w-4 h-4 sm:mr-2" />
+        <span className="hidden sm:inline">Выйти</span>
       </Button>
     </form>
   );
@@ -36,31 +36,32 @@ export default async function AdminLayout({
     <div className="min-h-screen">
       {/* Nav */}
       <nav className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3 sm:gap-6">
             <Link href="/admin" className="flex items-center gap-2 text-amber-500">
               <Film className="w-5 h-5" />
-              <span className="font-bold">Киноклуб</span>
+              <span className="font-bold hidden sm:inline">Киноклуб</span>
             </Link>
             <div className="flex items-center gap-1">
               <Link href="/admin">
                 <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
-                  <List className="w-4 h-4 mr-2" />
-                  Встречи
+                  <List className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Встречи</span>
                 </Button>
               </Link>
               <Link href="/admin/settings">
                 <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Настройки
+                  <Settings className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Настройки</span>
                 </Button>
               </Link>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Link href="/" target="_blank">
               <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-zinc-100">
-                Сайт
+                <span className="hidden sm:inline">Сайт</span>
+                <Film className="w-4 h-4 sm:hidden" />
               </Button>
             </Link>
             <LogoutButton />
@@ -69,7 +70,7 @@ export default async function AdminLayout({
       </nav>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {children}
       </main>
     </div>

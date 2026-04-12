@@ -274,7 +274,7 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
       {/* Director-specific                                             */}
       {/* ============================================================ */}
       {type === 'director' && (
-        <div className="space-y-6 rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
+        <div className="space-y-6 rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-4 sm:p-5 md:p-6">
           <div className="flex items-center gap-3 border-b border-zinc-800/60 pb-4">
             <div className="flex size-9 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/5">
               <User className="size-4 text-amber-400/80" />
@@ -335,48 +335,50 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
                 {(content.director?.filmography || []).map((film, i) => (
                   <div
                     key={i}
-                    className="group/row flex items-start gap-2 rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-2.5 transition-colors hover:border-zinc-700/70"
+                    className="group/row rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-2.5 transition-colors hover:border-zinc-700/70"
                   >
-                    {/* Poster thumbnail */}
-                    <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
-                      {film.posterUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={film.posterUrl}
-                          alt={film.title}
-                          className="h-full w-full object-cover"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).style.display = 'none';
-                          }}
+                    <div className="flex items-start gap-2">
+                      {/* Poster thumbnail */}
+                      <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+                        {film.posterUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={film.posterUrl}
+                            alt={film.title}
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <Film className="size-4 text-zinc-700" />
+                        )}
+                      </div>
+
+                      <div className="grid min-w-0 flex-1 grid-cols-[1fr_80px] gap-2 md:grid-cols-[1fr_90px_1.2fr]">
+                        <Input
+                          value={film.title}
+                          onChange={(e) => updateFilm(i, { title: e.target.value })}
+                          placeholder="Название"
+                          className="h-10 border-zinc-800 bg-zinc-950/60 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
                         />
-                      ) : (
-                        <Film className="size-4 text-zinc-700" />
-                      )}
-                    </div>
+                        <Input
+                          type="number"
+                          value={film.year}
+                          onChange={(e) => updateFilm(i, { year: parseInt(e.target.value) || 0 })}
+                          placeholder="Год"
+                          className="h-10 border-zinc-800 bg-zinc-950/60 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                        />
+                        <Input
+                          value={film.posterUrl}
+                          onChange={(e) => updateFilm(i, { posterUrl: e.target.value })}
+                          placeholder="URL постера"
+                          className="col-span-2 h-10 border-zinc-800 bg-zinc-950/60 font-mono text-[12px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20 md:col-span-1"
+                        />
+                      </div>
 
-                    <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 md:grid-cols-[1fr_90px_1.2fr]">
-                      <Input
-                        value={film.title}
-                        onChange={(e) => updateFilm(i, { title: e.target.value })}
-                        placeholder="Название"
-                        className="h-10 border-zinc-800 bg-zinc-950/60 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
-                      />
-                      <Input
-                        type="number"
-                        value={film.year}
-                        onChange={(e) => updateFilm(i, { year: parseInt(e.target.value) || 0 })}
-                        placeholder="Год"
-                        className="h-10 border-zinc-800 bg-zinc-950/60 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
-                      />
-                      <Input
-                        value={film.posterUrl}
-                        onChange={(e) => updateFilm(i, { posterUrl: e.target.value })}
-                        placeholder="URL постера"
-                        className="h-10 border-zinc-800 bg-zinc-950/60 font-mono text-[12px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
-                      />
+                      <DeleteIconButton onClick={() => removeFilm(i)} />
                     </div>
-
-                    <DeleteIconButton onClick={() => removeFilm(i)} />
                   </div>
                 ))}
               </div>
@@ -391,7 +393,7 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
       {type === 'cinematography' && (
         <div className="space-y-6">
           {/* Videos */}
-          <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
+          <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-4 sm:p-5 md:p-6">
             <SubsectionHeader
               icon={Video}
               title="Видео"
@@ -430,7 +432,7 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
       {/* Themes — quotes                                               */}
       {/* ============================================================ */}
       {type === 'themes' && (
-        <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
+        <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-4 sm:p-5 md:p-6">
           <SubsectionHeader
             icon={QuoteIcon}
             title="Цитаты"
@@ -509,7 +511,7 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
       {/* Facts — knowledge cards                                       */}
       {/* ============================================================ */}
       {type === 'facts' && (
-        <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-5 md:p-6">
+        <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 p-4 sm:p-5 md:p-6">
           <SubsectionHeader
             icon={Lightbulb}
             title="Карточки фактов"
@@ -527,11 +529,11 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
                   className="group/card relative overflow-hidden rounded-xl border border-zinc-800/70 bg-zinc-900/40 p-5 transition-colors hover:border-zinc-700"
                 >
                   {/* Corner index */}
-                  <div className="pointer-events-none absolute right-4 top-4 font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-700">
+                  <div className="pointer-events-none absolute right-4 top-4 hidden font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-700 sm:block">
                     № {String(i + 1).padStart(2, '0')}
                   </div>
 
-                  <div className="space-y-3 pr-16">
+                  <div className="space-y-3 sm:pr-16">
                     <FieldWrap label="Заголовок" icon={BookOpen}>
                       <IconInput
                         icon={BookOpen}
