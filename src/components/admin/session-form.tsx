@@ -708,7 +708,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
                   value={form.poster_url}
                   onChange={(e) => updateField('poster_url', e.target.value)}
                   placeholder="https://images.unsplash.com/…"
-                  className="h-11 border-zinc-800 bg-zinc-950/60 pl-10 font-mono text-sm text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                  className="h-11 border-zinc-800 bg-zinc-950/60 pl-10 font-mono text-base sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
                 />
               </div>
             </Field>
@@ -724,7 +724,7 @@ export default function SessionForm({ session, sections = [], bingoItems = [] }:
                   value={form.backdrop_url}
                   onChange={(e) => updateField('backdrop_url', e.target.value)}
                   placeholder="https://images.unsplash.com/…"
-                  className="h-11 border-zinc-800 bg-zinc-950/60 pl-10 font-mono text-sm text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                  className="h-11 border-zinc-800 bg-zinc-950/60 pl-10 font-mono text-base sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
                 />
               </div>
             </Field>

@@ -173,7 +173,7 @@ export function RichEditor({
       <EditorContent
         editor={editor}
         className={cn(
-          'prose prose-invert prose-sm max-w-none px-4 py-3 text-[13px] text-zinc-100',
+          'prose prose-invert prose-sm max-w-none px-4 py-3 text-base sm:text-[13px] text-zinc-100',
           '[&_.ProseMirror]:min-h-[80px] [&_.ProseMirror]:outline-none',
           '[&_.ProseMirror_p.is-editor-empty:first-child]:before:pointer-events-none',
           '[&_.ProseMirror_p.is-editor-empty:first-child]:before:float-left',

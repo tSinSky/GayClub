@@ -136,7 +136,7 @@ function IconInput({
       <Icon className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-zinc-500" />
       <Input
         {...props}
-        className={`h-10 border-zinc-800 bg-zinc-950/60 pl-9 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20 ${className}`}
+        className={`h-10 border-zinc-800 bg-zinc-950/60 pl-9 text-base sm:text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20 ${className}`}
       />
     </div>
   );
@@ -360,20 +360,20 @@ export default function SectionEditor({ type, content, onChange, sessionId }: Pr
                           value={film.title}
                           onChange={(e) => updateFilm(i, { title: e.target.value })}
                           placeholder="Название"
-                          className="h-10 border-zinc-800 bg-zinc-950/60 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                          className="h-10 border-zinc-800 bg-zinc-950/60 text-base sm:text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
                         />
                         <Input
                           type="number"
                           value={film.year}
                           onChange={(e) => updateFilm(i, { year: parseInt(e.target.value) || 0 })}
                           placeholder="Год"
-                          className="h-10 border-zinc-800 bg-zinc-950/60 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
+                          className="h-10 border-zinc-800 bg-zinc-950/60 text-base sm:text-[13px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
                         />
                         <Input
                           value={film.posterUrl}
                           onChange={(e) => updateFilm(i, { posterUrl: e.target.value })}
                           placeholder="URL постера"
-                          className="col-span-2 h-10 border-zinc-800 bg-zinc-950/60 font-mono text-[12px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20 md:col-span-1"
+                          className="col-span-2 h-10 border-zinc-800 bg-zinc-950/60 font-mono text-base sm:text-[12px] text-zinc-100 placeholder:text-zinc-600 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20 md:col-span-1"
                         />
                       </div>
 
