@@ -20,10 +20,12 @@ export async function getRatingCategories() {
 }
 
 export async function saveRatingCategories(
-  categories: { id: string; name: string; icon: string | null; sort_order: number }[]
+  categories: { id: string; name: string; description?: string | null; icon: string | null; sort_order: number }[]
 ) {
   if (!isSupabaseConfigured()) {
-    store.saveRatingCategories(categories);
+    store.saveRatingCategories(
+      categories.map(c => ({ ...c, description: c.description ?? null }))
+    );
     return { success: true };
   }
 

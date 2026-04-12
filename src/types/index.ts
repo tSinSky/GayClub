@@ -82,6 +82,7 @@ export interface BingoItem {
 export interface RatingCategory {
   id: string;
   name: string;
+  description: string | null;
   icon: string | null;
   sort_order: number;
 }

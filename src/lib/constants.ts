@@ -43,9 +43,14 @@ export const SECTION_TYPES: Array<Exclude<SectionType, 'custom'>> = BUILTIN_SECT
 export const MAX_CUSTOM_SECTIONS_PER_SESSION = 10;
 
 export const DEFAULT_CATEGORIES: Omit<RatingCategory, 'sort_order'>[] = [
-  { id: 'story', name: 'Сюжет', icon: null },
-  { id: 'cinematography', name: 'Операторская работа', icon: null },
-  { id: 'acting', name: 'Актёрская игра', icon: null },
-  { id: 'direction', name: 'Режиссура', icon: null },
-  { id: 'overall', name: 'Общее впечатление', icon: null },
+  { id: 'scenario', name: 'Сценарий', description: 'Насколько история логична, интересна и хорошо выстроена: сюжет, диалоги, конфликты, мотивация персонажей.', icon: null },
+  { id: 'direction', name: 'Режиссура', description: 'Насколько уверенно фильм поставлен: работа с актёрами, ритм сцен, подача материала и цельность видения.', icon: null },
+  { id: 'acting', name: 'Актёрская игра', description: 'Насколько убедительно актёры исполняют роли: эмоции, естественность, глубина и взаимодействие между персонажами.', icon: null },
+  { id: 'cinematography', name: 'Операторская работа', description: 'Насколько выразительно фильм снят: композиция кадра, свет, движение камеры, ракурсы и визуальная подача.', icon: null },
+  { id: 'editing', name: 'Монтаж', description: 'Насколько хорошо фильм собран по темпу и ритму: плавность сцен, динамика, напряжение и удобство восприятия.', icon: null },
+  { id: 'sound', name: 'Звук / музыка', description: 'Насколько качественно звук и музыка усиливают атмосферу, эмоции и общее впечатление от фильма.', icon: null },
+  { id: 'visual_style', name: 'Визуальный стиль', description: 'Насколько цельно и выразительно выглядит фильм: цвет, декорации, костюмы, дизайн мира и общая эстетика.', icon: null },
+  { id: 'themes', name: 'Тематика / смысл', description: 'Насколько фильм поднимает важные идеи, передаёт смысл и оставляет пищу для размышлений.', icon: null },
+  { id: 'originality', name: 'Оригинальность', description: 'Насколько фильм ощущается свежим, самобытным и не сводится к набору знакомых решений.', icon: null },
+  { id: 'overall', name: 'Общее впечатление', description: 'Итоговое личное восприятие фильма с учётом всех его сильных и слабых сторон.', icon: null },
 ];

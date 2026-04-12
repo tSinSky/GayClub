@@ -48,15 +48,16 @@ export default function AdminSettings({ categories: initialCategories }: Props) 
       {
         id: `cat_${Date.now()}`,
         name: '',
+        description: null,
         icon: null,
         sort_order: categories.length,
       },
     ]);
   };
 
-  const updateCategory = (index: number, name: string) => {
+  const updateCategory = (index: number, field: 'name' | 'description', value: string) => {
     const newCategories = [...categories];
-    newCategories[index] = { ...newCategories[index], name };
+    newCategories[index] = { ...newCategories[index], [field]: value || null };
     setCategories(newCategories);
   };
 
@@ -95,20 +96,28 @@ export default function AdminSettings({ categories: initialCategories }: Props) 
       <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-6">
         <h2 className="text-xl mb-6 font-bold">Категории оценок</h2>
 
-        <div className="space-y-2 mb-4">
+        <div className="space-y-3 mb-4">
           {categories.map((cat, i) => (
-            <div key={cat.id} className="flex gap-2">
-              <Input
-                value={cat.name}
-                onChange={(e) => updateCategory(i, e.target.value)}
-                placeholder="Название категории"
-                className="bg-zinc-800 border-zinc-700"
-              />
+            <div key={cat.id} className="flex gap-2 items-start">
+              <div className="flex-1 space-y-1">
+                <Input
+                  value={cat.name}
+                  onChange={(e) => updateCategory(i, 'name', e.target.value)}
+                  placeholder="Название категории"
+                  className="bg-zinc-800 border-zinc-700"
+                />
+                <Input
+                  value={cat.description || ''}
+                  onChange={(e) => updateCategory(i, 'description', e.target.value)}
+                  placeholder="Описание (необязательно)"
+                  className="bg-zinc-800 border-zinc-700 text-xs text-zinc-400"
+                />
+              </div>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => removeCategory(i)}
-                className="text-red-400 flex-shrink-0"
+                className="text-red-400 flex-shrink-0 mt-1"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>

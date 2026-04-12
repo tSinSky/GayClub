@@ -132,11 +132,16 @@ const seedBingoItems: BingoItem[] = [
 }));
 
 const seedCategories: RatingCategory[] = [
-  { id: 'story', name: 'Сюжет', icon: null, sort_order: 0 },
-  { id: 'depth', name: 'Глубина сюжета', icon: null, sort_order: 1 },
-  { id: 'acting', name: 'Актёрская игра', icon: null, sort_order: 2 },
-  { id: 'direction', name: 'Режиссура', icon: null, sort_order: 3 },
-  { id: 'overall', name: 'Общее впечатление', icon: null, sort_order: 4 },
+  { id: 'scenario', name: 'Сценарий', description: 'Насколько история логична, интересна и хорошо выстроена: сюжет, диалоги, конфликты, мотивация персонажей.', icon: null, sort_order: 0 },
+  { id: 'direction', name: 'Режиссура', description: 'Насколько уверенно фильм поставлен: работа с актёрами, ритм сцен, подача материала и цельность видения.', icon: null, sort_order: 1 },
+  { id: 'acting', name: 'Актёрская игра', description: 'Насколько убедительно актёры исполняют роли: эмоции, естественность, глубина и взаимодействие между персонажами.', icon: null, sort_order: 2 },
+  { id: 'cinematography', name: 'Операторская работа', description: 'Насколько выразительно фильм снят: композиция кадра, свет, движение камеры, ракурсы и визуальная подача.', icon: null, sort_order: 3 },
+  { id: 'editing', name: 'Монтаж', description: 'Насколько хорошо фильм собран по темпу и ритму: плавность сцен, динамика, напряжение и удобство восприятия.', icon: null, sort_order: 4 },
+  { id: 'sound', name: 'Звук / музыка', description: 'Насколько качественно звук и музыка усиливают атмосферу, эмоции и общее впечатление от фильма.', icon: null, sort_order: 5 },
+  { id: 'visual_style', name: 'Визуальный стиль', description: 'Насколько цельно и выразительно выглядит фильм: цвет, декорации, костюмы, дизайн мира и общая эстетика.', icon: null, sort_order: 6 },
+  { id: 'themes', name: 'Тематика / смысл', description: 'Насколько фильм поднимает важные идеи, передаёт смысл и оставляет пищу для размышлений.', icon: null, sort_order: 7 },
+  { id: 'originality', name: 'Оригинальность', description: 'Насколько фильм ощущается свежим, самобытным и не сводится к набору знакомых решений.', icon: null, sort_order: 8 },
+  { id: 'overall', name: 'Общее впечатление', description: 'Итоговое личное восприятие фильма с учётом всех его сильных и слабых сторон.', icon: null, sort_order: 9 },
 ];
 
 // --- In-Memory Store (singleton across hot reloads via globalThis) ---

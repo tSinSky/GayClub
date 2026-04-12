@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Check } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { submitRating, getSessionRatings } from '@/lib/actions/ratings';
 import { toast } from 'sonner';
 import type { RatingCategory, Rating } from '@/types';
@@ -32,6 +32,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
   const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<CategoryResult[]>([]);
   const [voterCount, setVoterCount] = useState(0);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [userName, setUserName] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('cinema_club_user_name') || '';
@@ -87,55 +88,83 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
 
   const handleClose = () => {
     onClose();
-    // Reset state after close animation
     setTimeout(() => {
       setView('voting');
       setRatings({});
       setResults([]);
+      setExpandedCategory(null);
     }, 200);
   };
 
   const allRated = categories.every(cat => ratings[cat.id] > 0) && userName.trim().length > 0;
+  const ratedCount = categories.filter(cat => ratings[cat.id] > 0).length;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl">
+      <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg max-h-[90vh] overflow-y-auto p-0">
         {view === 'voting' ? (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl">Оценить фильм</DialogTitle>
+            <DialogHeader className="sticky top-0 z-10 bg-zinc-900 border-b border-zinc-800 px-5 py-4">
+              <DialogTitle className="text-xl">Оценить фильм</DialogTitle>
+              <p className="text-sm text-zinc-500 mt-1">
+                <span className="text-amber-400">{sessionTitle}</span>
+                {' · '}
+                <span className={ratedCount === categories.length ? 'text-green-400' : ''}>
+                  {ratedCount}/{categories.length}
+                </span>
+              </p>
             </DialogHeader>
 
-            <div className="space-y-6 py-4">
-              <div className="mb-6">
-                <label className="text-sm text-zinc-400 mb-1.5 block">Ваше им��</label>
+            <div className="px-5 py-4 space-y-4">
+              {/* Name input */}
+              <div>
+                <label className="text-sm text-zinc-400 mb-1.5 block">Ваше имя</label>
                 <Input
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   placeholder="Как вас зовут?"
                   maxLength={30}
-                  className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500"
+                  className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500 h-9"
                 />
               </div>
 
-              <p className="text-zinc-400 mb-6">
-                Оцените <span className="text-amber-400">{sessionTitle}</span> по категориям
-              </p>
-
+              {/* Categories */}
               {categories.map(category => {
                 const rating = ratings[category.id] || 0;
                 const hovered = hoveredRatings[category.id] || 0;
                 const displayRating = hovered || rating;
+                const isExpanded = expandedCategory === category.id;
 
                 return (
-                  <div key={category.id} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-lg font-medium">{category.name}</h4>
+                  <div key={category.id} className="space-y-1.5">
+                    {/* Category header */}
+                    <div className="flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedCategory(isExpanded ? null : category.id)}
+                        className="flex items-center gap-1 text-left min-w-0"
+                      >
+                        <h4 className="text-sm font-semibold truncate">{category.name}</h4>
+                        {category.description && (
+                          isExpanded
+                            ? <ChevronUp className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                            : <ChevronDown className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                        )}
+                      </button>
                       {rating > 0 && (
-                        <span className="text-amber-400 font-bold text-lg">{rating}/10</span>
+                        <span className="text-amber-400 font-bold text-sm shrink-0">{rating}/10</span>
                       )}
                     </div>
-                    <div className="flex gap-1">
+
+                    {/* Description (collapsible) */}
+                    {isExpanded && category.description && (
+                      <p className="text-xs text-zinc-500 leading-relaxed pb-1">
+                        {category.description}
+                      </p>
+                    )}
+
+                    {/* Score buttons — two rows of 5 on mobile */}
+                    <div className="grid grid-cols-10 gap-1 sm:flex sm:gap-1">
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(value => (
                         <button
                           key={value}
@@ -146,7 +175,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
                           onMouseLeave={() =>
                             setHoveredRatings(prev => ({ ...prev, [category.id]: 0 }))
                           }
-                          className={`w-9 h-9 rounded-lg text-sm font-semibold transition-all ${
+                          className={`aspect-square sm:w-8 sm:h-8 rounded-md text-xs font-semibold transition-all ${
                             value <= displayRating
                               ? 'bg-amber-500 text-zinc-950'
                               : 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300'
@@ -161,69 +190,68 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
               })}
             </div>
 
-            <div className="flex gap-3 justify-end pt-4 border-t border-zinc-800">
+            {/* Submit footer */}
+            <div className="sticky bottom-0 bg-zinc-900 border-t border-zinc-800 px-5 py-3 flex gap-3 justify-end">
               <Button
                 variant="ghost"
                 onClick={handleClose}
-                className="text-zinc-400 hover:text-zinc-100"
+                className="text-zinc-400 hover:text-zinc-100 h-9"
               >
                 Отмена
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={!allRated || submitting}
-                className="bg-amber-500 hover:bg-amber-600 text-zinc-950 disabled:opacity-50"
+                className="bg-amber-500 hover:bg-amber-600 text-zinc-950 disabled:opacity-50 h-9"
               >
-                {submitting ? 'Отправка...' : 'Отправить оценки'}
+                {submitting ? 'Отправка...' : 'Отправить'}
               </Button>
             </div>
           </>
         ) : (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-2xl flex items-center gap-2">
-                <Check className="w-6 h-6 text-green-500" />
+            <DialogHeader className="px-5 pt-5">
+              <DialogTitle className="text-xl flex items-center gap-2">
+                <Check className="w-5 h-5 text-green-500" />
                 Спасибо за оценку!
               </DialogTitle>
             </DialogHeader>
 
-            <div className="py-4">
-              <p className="text-zinc-400 mb-6">
+            <div className="px-5 py-4">
+              <p className="text-zinc-400 text-sm mb-4">
                 Результаты для <span className="text-amber-400">{sessionTitle}</span>
                 <span className="text-zinc-600 ml-2">({voterCount} {voterCount === 1 ? 'голос' : voterCount < 5 ? 'голоса' : 'голосов'})</span>
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {results.map((cat) => (
-                  <div key={cat.name} className="space-y-1.5">
+                  <div key={cat.name} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-300">{cat.name}</span>
-                      <div className="flex items-center gap-3">
+                      <span className="text-zinc-300 text-xs">{cat.name}</span>
+                      <div className="flex items-center gap-2">
                         <span className="text-zinc-500 text-xs">
                           вы: {cat.userScore}/10
                         </span>
-                        <span className="text-amber-400 font-medium">
+                        <span className="text-amber-400 font-medium text-sm">
                           {cat.average.toFixed(1)}
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-amber-500 rounded-full transition-all duration-500"
-                          style={{ width: `${(cat.average / 10) * 100}%` }}
-                        />
-                      </div>
+                    <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                        style={{ width: `${(cat.average / 10) * 100}%` }}
+                      />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-zinc-800">
+            <div className="px-5 pb-5 flex justify-end">
               <Button
                 onClick={handleClose}
-                className="bg-amber-500 hover:bg-amber-600 text-zinc-950"
+                className="bg-amber-500 hover:bg-amber-600 text-zinc-950 h-9"
               >
                 Закрыть
               </Button>

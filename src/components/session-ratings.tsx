@@ -137,7 +137,7 @@ export default function SessionRatings({ sessionId, categories, initialRatings }
       <div className="space-y-3">
         {stats.categoryStats.map((cat) => (
           <div key={cat.categoryId} className="flex items-center gap-3">
-            <span className="text-sm text-zinc-400 w-40 shrink-0 truncate">
+            <span className="text-sm text-zinc-400 w-44 shrink-0 truncate">
               {cat.name}
             </span>
             <RatingBar value={cat.average} />
