@@ -101,10 +101,10 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-lg flex flex-col max-h-[90vh] overflow-hidden" showCloseButton={false}>
         {view === 'voting' ? (
           <>
-            <DialogHeader className="sticky top-0 z-10 bg-zinc-900 border-b border-zinc-800 px-5 py-4">
+            <DialogHeader>
               <DialogTitle className="text-xl">Оценить фильм</DialogTitle>
               <p className="text-sm text-zinc-500 mt-1">
                 <span className="text-amber-400">{sessionTitle}</span>
@@ -115,7 +115,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
               </p>
             </DialogHeader>
 
-            <div className="px-5 py-4 space-y-4">
+            <div className="overflow-y-auto -mx-6 px-6 space-y-4 flex-1 min-h-0">
               {/* Name input */}
               <div>
                 <label className="text-sm text-zinc-400 mb-1.5 block">Ваше имя</label>
@@ -163,8 +163,8 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
                       </p>
                     )}
 
-                    {/* Score buttons — two rows of 5 on mobile */}
-                    <div className="grid grid-cols-10 gap-1 sm:flex sm:gap-1">
+                    {/* Score buttons */}
+                    <div className="grid grid-cols-10 gap-1">
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(value => (
                         <button
                           key={value}
@@ -175,7 +175,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
                           onMouseLeave={() =>
                             setHoveredRatings(prev => ({ ...prev, [category.id]: 0 }))
                           }
-                          className={`aspect-square sm:w-8 sm:h-8 rounded-md text-xs font-semibold transition-all ${
+                          className={`aspect-square rounded-md text-xs font-semibold transition-all ${
                             value <= displayRating
                               ? 'bg-amber-500 text-zinc-950'
                               : 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300'
@@ -191,7 +191,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
             </div>
 
             {/* Submit footer */}
-            <div className="sticky bottom-0 bg-zinc-900 border-t border-zinc-800 px-5 py-3 flex gap-3 justify-end">
+            <div className="border-t border-zinc-800 pt-3 flex gap-3 justify-end -mb-2">
               <Button
                 variant="ghost"
                 onClick={handleClose}
@@ -210,14 +210,14 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
           </>
         ) : (
           <>
-            <DialogHeader className="px-5 pt-5">
+            <DialogHeader>
               <DialogTitle className="text-xl flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-500" />
                 Спасибо за оценку!
               </DialogTitle>
             </DialogHeader>
 
-            <div className="px-5 py-4">
+            <div className="overflow-y-auto -mx-6 px-6 flex-1 min-h-0">
               <p className="text-zinc-400 text-sm mb-4">
                 Результаты для <span className="text-amber-400">{sessionTitle}</span>
                 <span className="text-zinc-600 ml-2">({voterCount} {voterCount === 1 ? 'голос' : voterCount < 5 ? 'голоса' : 'голосов'})</span>
@@ -248,7 +248,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
               </div>
             </div>
 
-            <div className="px-5 pb-5 flex justify-end">
+            <div className="flex justify-end pt-3 border-t border-zinc-800 -mb-2">
               <Button
                 onClick={handleClose}
                 className="bg-amber-500 hover:bg-amber-600 text-zinc-950 h-9"
