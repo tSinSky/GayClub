@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Star, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/client';
 import { getSessionRatings } from '@/lib/actions/ratings';
@@ -46,33 +46,24 @@ function computeStats(ratings: Rating[], categories: RatingCategory[]) {
   return { categoryStats, overallAverage, voterCount: ratings.length };
 }
 
-function StarDisplay({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg' }) {
-  const stars = [1, 2, 3, 4, 5];
-  const iconSize = size === 'lg' ? 'w-7 h-7' : 'w-4 h-4';
-
+function RatingScale({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
-      {stars.map((value) => {
-        const filled = rating >= value;
-        const halfFilled = !filled && rating >= value - 0.5;
-        return (
-          <Star
-            key={value}
-            className={`${iconSize} ${
-              filled
-                ? 'fill-amber-500 text-amber-500'
-                : halfFilled
-                  ? 'fill-amber-500/50 text-amber-500'
-                  : 'text-zinc-700'
-            }`}
-          />
-        );
-      })}
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+        <div
+          key={value}
+          className={`w-3 h-3 rounded-sm ${
+            value <= Math.round(rating)
+              ? 'bg-amber-500'
+              : 'bg-zinc-800'
+          }`}
+        />
+      ))}
     </div>
   );
 }
 
-function RatingBar({ value, max = 5 }: { value: number; max?: number }) {
+function RatingBar({ value, max = 10 }: { value: number; max?: number }) {
   const percentage = (value / max) * 100;
   return (
     <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
@@ -122,7 +113,7 @@ export default function SessionRatings({ sessionId, categories, initialRatings }
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+          <span className="text-amber-500 text-lg">★</span>
           <h3 className="text-lg font-bold">Оценки зрителей</h3>
         </div>
         <div className="flex items-center gap-1.5 text-sm text-zinc-500">
@@ -137,8 +128,8 @@ export default function SessionRatings({ sessionId, categories, initialRatings }
           {stats.overallAverage.toFixed(1)}
         </div>
         <div>
-          <StarDisplay rating={stats.overallAverage} size="lg" />
-          <p className="text-xs text-zinc-500 mt-1">Общая оценка</p>
+          <RatingScale rating={stats.overallAverage} />
+          <p className="text-xs text-zinc-500 mt-1">из 10</p>
         </div>
       </div>
 

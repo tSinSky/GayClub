@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Star, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { submitRating, getSessionRatings } from '@/lib/actions/ratings';
 import { toast } from 'sonner';
 import type { RatingCategory, Rating } from '@/types';
@@ -107,9 +107,14 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
 
                 return (
                   <div key={category.id} className="space-y-2">
-                    <h4 className="text-lg font-medium">{category.name}</h4>
-                    <div className="flex gap-2">
-                      {[1, 2, 3, 4, 5].map(value => (
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-lg font-medium">{category.name}</h4>
+                      {rating > 0 && (
+                        <span className="text-amber-400 font-bold text-lg">{rating}/10</span>
+                      )}
+                    </div>
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(value => (
                         <button
                           key={value}
                           onClick={() => handleRate(category.id, value)}
@@ -119,15 +124,13 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
                           onMouseLeave={() =>
                             setHoveredRatings(prev => ({ ...prev, [category.id]: 0 }))
                           }
-                          className="group transition-transform hover:scale-110"
+                          className={`w-9 h-9 rounded-lg text-sm font-semibold transition-all ${
+                            value <= displayRating
+                              ? 'bg-amber-500 text-zinc-950'
+                              : 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300'
+                          }`}
                         >
-                          <Star
-                            className={`w-8 h-8 transition-colors ${
-                              value <= displayRating
-                                ? 'fill-amber-500 text-amber-500'
-                                : 'text-zinc-700 group-hover:text-zinc-600'
-                            }`}
-                          />
+                          {value}
                         </button>
                       ))}
                     </div>
@@ -175,7 +178,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
                       <span className="text-zinc-300">{cat.name}</span>
                       <div className="flex items-center gap-3">
                         <span className="text-zinc-500 text-xs">
-                          вы: {cat.userScore}
+                          вы: {cat.userScore}/10
                         </span>
                         <span className="text-amber-400 font-medium">
                           {cat.average.toFixed(1)}
@@ -186,7 +189,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
                       <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-amber-500 rounded-full transition-all duration-500"
-                          style={{ width: `${(cat.average / 5) * 100}%` }}
+                          style={{ width: `${(cat.average / 10) * 100}%` }}
                         />
                       </div>
                     </div>
