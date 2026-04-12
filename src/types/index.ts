@@ -90,6 +90,7 @@ export interface Rating {
   id: string;
   session_id: string;
   user_id: string;
+  user_name: string | null;
   scores: Record<string, number>;
   created_at: string;
 }

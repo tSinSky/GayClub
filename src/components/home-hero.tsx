@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Film, Calendar, User } from 'lucide-react';
+import { Film, Calendar, User, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Session } from '@/types';
 
@@ -87,15 +87,27 @@ export default function HomeHero({ session }: Props) {
                 )}
               </div>
 
-              <Link href={`/session/${session.id}`}>
-                <Button
-                  size="lg"
-                  className="bg-amber-500 hover:bg-amber-600 text-zinc-950 px-8 py-6 text-lg shadow-lg shadow-amber-500/20"
-                >
-                  <Film className="w-5 h-5 mr-2" />
-                  Погрузиться в фильм
-                </Button>
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link href={`/session/${session.id}`}>
+                  <Button
+                    size="lg"
+                    className="bg-amber-500 hover:bg-amber-600 text-zinc-950 px-8 py-6 text-lg shadow-lg shadow-amber-500/20"
+                  >
+                    <Film className="w-5 h-5 mr-2" />
+                    Погрузиться в фильм
+                  </Button>
+                </Link>
+                <Link href="/ratings">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10 px-8 py-6 text-lg"
+                  >
+                    <Star className="w-5 h-5 mr-2" />
+                    Все оценки
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

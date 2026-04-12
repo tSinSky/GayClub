@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Check } from 'lucide-react';
 import { submitRating, getSessionRatings } from '@/lib/actions/ratings';
 import { toast } from 'sonner';
@@ -31,6 +32,12 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
   const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<CategoryResult[]>([]);
   const [voterCount, setVoterCount] = useState(0);
+  const [userName, setUserName] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('cinema_club_user_name') || '';
+    }
+    return '';
+  });
 
   const handleRate = (categoryId: string, value: number) => {
     setRatings(prev => ({ ...prev, [categoryId]: value }));
@@ -48,7 +55,11 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
   const handleSubmit = async () => {
     setSubmitting(true);
     const userId = getUserId();
-    const result = await submitRating(sessionId, userId, ratings);
+    const trimmedName = userName.trim();
+    if (trimmedName) {
+      localStorage.setItem('cinema_club_user_name', trimmedName);
+    }
+    const result = await submitRating(sessionId, userId, ratings, trimmedName || undefined);
 
     if (result.error) {
       toast.error('Ошибка при отправке оценки');
@@ -84,7 +95,7 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
     }, 200);
   };
 
-  const allRated = categories.every(cat => ratings[cat.id] > 0);
+  const allRated = categories.every(cat => ratings[cat.id] > 0) && userName.trim().length > 0;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -96,6 +107,17 @@ export default function RatingModal({ sessionId, sessionTitle, categories, open,
             </DialogHeader>
 
             <div className="space-y-6 py-4">
+              <div className="mb-6">
+                <label className="text-sm text-zinc-400 mb-1.5 block">Ваше им��</label>
+                <Input
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="Как вас зовут?"
+                  maxLength={30}
+                  className="bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-500"
+                />
+              </div>
+
               <p className="text-zinc-400 mb-6">
                 Оцените <span className="text-amber-400">{sessionTitle}</span> по категориям
               </p>

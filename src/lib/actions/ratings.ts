@@ -9,11 +9,13 @@ import type { Rating } from '@/types';
 export async function submitRating(
   sessionId: string,
   userId: string,
-  scores: Record<string, number>
+  scores: Record<string, number>,
+  userName?: string
 ) {
   if (!isSupabaseConfigured()) {
-    const data = store.upsertRating(sessionId, userId, scores);
+    const data = store.upsertRating(sessionId, userId, scores, userName || null);
     revalidatePath(`/session/${sessionId}`);
+    revalidatePath('/ratings');
     return { data };
   }
 
@@ -21,7 +23,7 @@ export async function submitRating(
   const { data, error } = await supabase
     .from('ratings')
     .upsert(
-      { session_id: sessionId, user_id: userId, scores },
+      { session_id: sessionId, user_id: userId, scores, user_name: userName || null },
       { onConflict: 'session_id,user_id' }
     )
     .select()
@@ -29,6 +31,7 @@ export async function submitRating(
   if (error) return { error: error.message };
 
   revalidatePath(`/session/${sessionId}`);
+  revalidatePath('/ratings');
   return { data: data as Rating };
 }
 
@@ -41,6 +44,19 @@ export async function getSessionRatings(sessionId: string) {
     .from('ratings')
     .select('*')
     .eq('session_id', sessionId);
+  if (error) return [];
+  return data as Rating[];
+}
+
+export async function getAllRatings() {
+  if (!isSupabaseConfigured()) {
+    return store.getAllRatings();
+  }
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from('ratings')
+    .select('*')
+    .order('created_at', { ascending: false });
   if (error) return [];
   return data as Rating[];
 }

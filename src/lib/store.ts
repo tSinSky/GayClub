@@ -415,19 +415,26 @@ export const store = {
     return getStore().ratings.filter((r) => r.session_id === sessionId);
   },
 
-  upsertRating(sessionId: string, userId: string, scores: Record<string, number>): Rating {
+  getAllRatings(): Rating[] {
+    return [...getStore().ratings].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  },
+
+  upsertRating(sessionId: string, userId: string, scores: Record<string, number>, userName?: string | null): Rating {
     const s = getStore();
     const idx = s.ratings.findIndex(
       (r) => r.session_id === sessionId && r.user_id === userId
     );
     if (idx !== -1) {
-      s.ratings[idx] = { ...s.ratings[idx], scores };
+      s.ratings[idx] = { ...s.ratings[idx], scores, user_name: userName ?? s.ratings[idx].user_name };
       return s.ratings[idx];
     }
     const newRating: Rating = {
       id: uuid(),
       session_id: sessionId,
       user_id: userId,
+      user_name: userName ?? null,
       scores,
       created_at: new Date().toISOString(),
     };
