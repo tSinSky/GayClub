@@ -103,22 +103,47 @@ export async function upsertSection(
     return { data: data as SessionSection };
   }
 
-  // Path B: built-in upsert via (session_id, type) partial unique index
+  // Path B: built-in upsert via select-then-update/insert
+  // (The partial unique index `session_sections_builtin_unique` cannot be
+  //  referenced by Supabase's `.upsert({ onConflict })` — Postgres requires
+  //  the WHERE clause to match a partial index, which the JS client omits.)
   if (params.type !== 'custom') {
-    const { data, error } = await supabase
+    const { data: existing } = await supabase
       .from('session_sections')
-      .upsert(
-        {
-          session_id: params.sessionId,
-          type: params.type,
+      .select('id')
+      .eq('session_id', params.sessionId)
+      .eq('type', params.type)
+      .maybeSingle();
+
+    if (existing) {
+      const { data, error } = await supabase
+        .from('session_sections')
+        .update({
           title,
           icon,
           content: params.content,
           enabled: params.enabled,
           sort_order: params.sortOrder,
-        },
-        { onConflict: 'session_id,type' },
-      )
+        })
+        .eq('id', existing.id)
+        .select()
+        .single();
+      if (error) return { error: error.message };
+      revalidatePath(`/session/${params.sessionId}`);
+      return { data: data as SessionSection };
+    }
+
+    const { data, error } = await supabase
+      .from('session_sections')
+      .insert({
+        session_id: params.sessionId,
+        type: params.type,
+        title,
+        icon,
+        content: params.content,
+        enabled: params.enabled,
+        sort_order: params.sortOrder,
+      })
       .select()
       .single();
     if (error) return { error: error.message };
