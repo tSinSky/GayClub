@@ -7,6 +7,22 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 
+// tiptap-core's default attribute parser runs `getAttribute(name)` through a
+// `fromString` helper that coerces purely-numeric strings to `Number` and
+// `"true"/"false"` to booleans. For image `alt` like `![1](url)` the alt
+// becomes the number `1`, which then crashes prosemirror-markdown's serializer
+// with `alt.replace is not a function` on the next getMarkdown() call. Keep
+// these as raw strings.
+const StringAttrImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      alt: { default: null, parseHTML: (el) => el.getAttribute('alt') },
+      title: { default: null, parseHTML: (el) => el.getAttribute('title') },
+    };
+  },
+});
+
 // tiptap-markdown 0.9.0 does not augment @tiptap/core's Storage interface,
 // so `editor.storage.markdown` is untyped under TipTap v3. Add the
 // augmentation here so the rest of the codebase gets typed access.
@@ -108,7 +124,7 @@ export function RichEditor({
             }),
           ]
         : []),
-      ...(has('image') ? [Image.configure({ inline: false, allowBase64: false })] : []),
+      ...(has('image') ? [StringAttrImage.configure({ inline: false, allowBase64: false })] : []),
     ],
     content: value,
     onUpdate: ({ editor }) => {
